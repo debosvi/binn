@@ -209,10 +209,10 @@ typedef void (*binn_mem_free)(void*);
 
 
 struct binn_struct {
-  int    header;     // this struct header holds the magic number (BINN_MAGIC) that identifies this memory block as a binn structure
-  BOOL   allocated;  // the struct can be allocated using malloc_fn() or can be on the stack
-  BOOL   writable;   // did it was create for writing? it can use the pbuf if not unified with ptr
-  BOOL   dirty;      // the container header is not written to the buffer
+  int    header;     // 8 this struct header holds the magic number (BINN_MAGIC) that identifies this memory block as a binn structure
+  BOOL   allocated;  // 8 the struct can be allocated using malloc_fn() or can be on the stack
+  BOOL   writable;   // 8 did it was create for writing? it can use the pbuf if not unified with ptr
+  BOOL   dirty;      // 8 the container header is not written to the buffer
   //
   void  *pbuf;       // use *ptr below?
   BOOL   pre_allocated;

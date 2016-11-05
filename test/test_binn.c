@@ -5,20 +5,7 @@
 #include <math.h>  /* for fabs */
 #include <assert.h>
 #include "test_binn.h"
-#include "../src/binn.h"
 
-#define BINN_MAGIC            0x1F22B11F
-
-#define MAX_BINN_HEADER       9  // [1:type][4:size][4:count]
-#define MIN_BINN_SIZE         3  // [1:type][1:size][1:count]
-#define CHUNK_SIZE            256  // 1024
-
-extern void* (*malloc_fn)(int len);
-extern void* (*realloc_fn)(void *ptr, int len);
-extern void  (*free_fn)(void *ptr);
-
-uint64 htonll(uint64 input);
-#define ntohll htonll
 
 /*************************************************************************************/
 
@@ -342,7 +329,7 @@ void test1() {
   assert(binn_new(0, 0, NULL) == INVALID_BINN);
   assert(binn_new(5, 0, NULL) == INVALID_BINN);
   assert(binn_new(BINN_MAP, -1, NULL) == INVALID_BINN);
-  ptr = &obj1;  // create a valid pointer
+  ptr = (char*)&obj1;  // create a valid pointer
   assert(binn_new(BINN_MAP, -1, ptr) == INVALID_BINN);
   assert(binn_new(BINN_MAP, MIN_BINN_SIZE-1, ptr) == INVALID_BINN);
 
@@ -1664,7 +1651,7 @@ void test3() {
   //assert(binn_ptr(&size) == NULL);
   //assert(binn_ptr(&count) == NULL);
 
-  assert(IsValidBinnHeader(NULL) == FALSE);
+  assert(IsValidBinnHeader(NULL,NULL,NULL,NULL,NULL) == FALSE);
 
   ptr = binn_ptr(obj);
   assert(ptr != NULL);
@@ -1743,7 +1730,7 @@ int main() {
 
   puts("\nStarting the unit/regression tests...\n");
 
-  printf("sizeof(binn) = %d\n\n", sizeof(binn));
+  printf("sizeof(binn) = %lu\n\n", sizeof(binn));
 
   test_endianess();
 

@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>  /* for fabs */
 #include <assert.h>
-#include "../src/binn.h"
+#include "binn.h"
 
 #ifdef _MSC_VER
 #define snprintf _snprintf
@@ -405,7 +405,7 @@ void test_binn_read(void *objptr) {
 
   ptr = 0;
   assert(binn_object_get(objptr, "str", BINN_STRING, &ptr, NULL) == TRUE);
-  printf("ptr: (%d) '%s'\n", ptr, ptr);
+  printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "the value") == 0);
 
 
@@ -428,7 +428,7 @@ void test_binn_read(void *objptr) {
 
 
   assert(binn_object_get(objptr, "list", BINN_LIST, &listptr, NULL) == TRUE);
-  printf("obj ptr: %d  list ptr: %d\n", objptr, listptr);
+  printf("obj ptr: %p  list ptr: %p\n", objptr, listptr);
   assert(listptr != 0);
   assert(listptr > objptr);
 
@@ -439,7 +439,7 @@ void test_binn_read(void *objptr) {
 
   ptr = 0;
   if (binn_list_get(listptr, 3, BINN_STRING, &ptr, NULL) == TRUE);
-  printf("ptr: (%d) '%s'\n", ptr, ptr);
+  printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "this is a string") == 0);
 
 
@@ -502,7 +502,7 @@ void test_binn_read(void *objptr) {
 
   ptr = 0;
   assert(binn_object_get_str(objptr, "str", &ptr) == TRUE);
-  printf("ptr: (%d) '%s'\n", ptr, ptr);
+  printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "the value") == 0);
 
 
@@ -524,7 +524,7 @@ void test_binn_read(void *objptr) {
 
 
   assert(binn_object_get_list(objptr, "list", &listptr) == TRUE);
-  printf("obj ptr: %d  list ptr: %d\n", objptr, listptr);
+  printf("obj ptr: %p  list ptr: %p\n", objptr, listptr);
   assert(listptr != 0);
   assert(listptr > objptr);
 
@@ -535,7 +535,7 @@ void test_binn_read(void *objptr) {
 
   ptr = 0;
   if (binn_list_get_str(listptr, 3, &ptr) == TRUE);
-  printf("ptr: (%d) '%s'\n", ptr, ptr);
+  printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "this is a string") == 0);
 
 
@@ -587,7 +587,7 @@ void test_binn_read(void *objptr) {
 
 
   ptr = binn_object_str(objptr, "str");
-  printf("ptr: (%d) '%s'\n", ptr, ptr);
+  printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "the value") == 0);
 
 
@@ -605,7 +605,7 @@ void test_binn_read(void *objptr) {
 
 
   listptr = binn_object_list(objptr, "list");
-  printf("obj ptr: %d  list ptr: %d\n", objptr, listptr);
+  printf("obj ptr: %p  list ptr: %p\n", objptr, listptr);
   assert(listptr != 0);
   assert(listptr > objptr);
 
@@ -614,7 +614,7 @@ void test_binn_read(void *objptr) {
   assert(vint32 == 123);
 
   ptr = binn_list_str(listptr, 3);
-  printf("ptr: (%d) '%s'\n", ptr, ptr);
+  printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "this is a string") == 0);
 
 
@@ -1867,14 +1867,14 @@ void test_binn_iter(BOOL use_int_compression) {
   ptr = binn_ptr(list);
   assert(ptr != 0);
   assert(binn_iter_init(&iter, ptr, BINN_LIST));
-  assert(iter.pnext > ptr);
-  assert(iter.plimit > ptr);
+  assert(iter.pnext > (unsigned char*)ptr);
+  assert(iter.plimit > (unsigned char*)ptr);
   assert(iter.count == 12);
   assert(iter.current == 0);
 
   assert(binn_list_next(&iter, &value) == TRUE);
-  assert(iter.pnext > ptr);
-  assert(iter.plimit > ptr);
+  assert(iter.pnext > (unsigned char*)ptr);
+  assert(iter.plimit > (unsigned char*)ptr);
   assert(iter.count == 12);
   assert(iter.current == 1);
   assert(value.type == BINN_INT8);
@@ -1966,14 +1966,14 @@ void test_binn_iter(BOOL use_int_compression) {
   ptr = binn_ptr(obj);
   assert(ptr != 0);
   assert(binn_iter_init(&iter, ptr, BINN_OBJECT));
-  assert(iter.pnext > ptr);
-  assert(iter.plimit > ptr);
+  assert(iter.pnext > (unsigned char*)ptr);
+  assert(iter.plimit > (unsigned char*)ptr);
   assert(iter.count == 12);
   assert(iter.current == 0);
 
   assert(binn_object_next(&iter, key, &value) == TRUE);
-  assert(iter.pnext > ptr);
-  assert(iter.plimit > ptr);
+  assert(iter.pnext > (unsigned char*)ptr);
+  assert(iter.plimit > (unsigned char*)ptr);
   assert(iter.count == 12);
   assert(iter.current == 1);
   assert(value.type == BINN_INT8);
@@ -2090,14 +2090,14 @@ void test_binn_iter(BOOL use_int_compression) {
   ptr = binn_ptr(map);
   assert(ptr != 0);
   assert(binn_iter_init(&iter, ptr, BINN_MAP));
-  assert(iter.pnext > ptr);
-  assert(iter.plimit > ptr);
+  assert(iter.pnext > (unsigned char*)ptr);
+  assert(iter.plimit > (unsigned char*)ptr);
   assert(iter.count == 12);
   assert(iter.current == 0);
 
   assert(binn_map_next(&iter, &id, &value) == TRUE);
-  assert(iter.pnext > ptr);
-  assert(iter.plimit > ptr);
+  assert(iter.pnext > (unsigned char*)ptr);
+  assert(iter.plimit > (unsigned char*)ptr);
   assert(iter.count == 12);
   assert(iter.current == 1);
   assert(value.type == BINN_INT8);
