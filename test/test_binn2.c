@@ -4,7 +4,8 @@
 #include <string.h>
 #include <math.h>  /* for fabs */
 #include <assert.h>
-#include "binn.h"
+
+#include "test_binn.h"
 
 #ifdef _MSC_VER
 #define snprintf _snprintf
@@ -15,30 +16,18 @@ int MY_CURRENCY;
 
 char tmp[128];
 
-void * memdup(void *src, int size);
 
-char * i64toa(int64 val, char *buf, int radix);
-#ifdef _MSC_VER
-#define atoi64 _atoi64
-#else
-int64  atoi64(char *str);
-#endif
-
-BOOL AlmostEqualFloats(float A, float B, int maxUlps);
 
 /*************************************************************************************/
 
-int vint32; unsigned int vuint32;
-int64 vint64; uint64 vuint64;
 short vint16; unsigned short vuint16;
 signed char vint8; unsigned char vuint8;
 float vfloat32;
 double vfloat64;
-BOOL vbool;
 
 /*************************************************************************************/
 
-char * stripchr(char *mainstr, int separator) {
+static char * stripchr(char *mainstr, int separator) {
   char *ptr;
 
   if (mainstr == NULL) return NULL;
@@ -57,7 +46,7 @@ char * stripchr(char *mainstr, int separator) {
 // month: 1-12 -> 2^4 -> 4 bits
 // year:  16 - 9 bits = 7 bits -> 2^7=128 - from 1900 to 2028
 
-unsigned short str_to_date(char *datestr) {
+static unsigned short str_to_date(char *datestr) {
   unsigned short date;
   int day, month, year;
   char *next;
@@ -82,7 +71,7 @@ unsigned short str_to_date(char *datestr) {
 
 /*************************************************************************************/
 
-char * date_to_str(unsigned short date) {
+static char * date_to_str(unsigned short date) {
   int day, month, year;
   //char *datestr;
 
@@ -104,7 +93,7 @@ char * date_to_str(unsigned short date) {
 #define CURRENCY_DECIMAL_DIGITS_STR  "0000"
 #define CURRENCY_FACTOR       10000
 
-int64 str_to_currency(char *str) {
+static int64_t str_to_currency(char *str) {
   char *next;
   int size, i;
 
@@ -132,7 +121,7 @@ int64 str_to_currency(char *str) {
 
 /*************************************************************************************/
 
-char * currency_to_str(int64 value) {
+static char * currency_to_str(int64_t value) {
   char *str, *ptr;
   int size, move, i;
 
@@ -157,7 +146,7 @@ char * currency_to_str(int64 value) {
 
 /*************************************************************************************/
 
-int64 float_to_currency(double value) {
+static int64_t float_to_currency(double value) {
 
   snprintf(tmp, 127, "%.4e", value);
 
@@ -167,23 +156,23 @@ int64 float_to_currency(double value) {
 
 /*************************************************************************************/
 
-double currency_to_float(int64 value) {
-
-  currency_to_str(value);
-
-  return atof(tmp);
-
-}
+// static double currency_to_float(int64_t value) {
+// 
+//   currency_to_str(value);
+// 
+//   return atof(tmp);
+// 
+// }
 
 /*************************************************************************************/
 
-int64 mul_currency(int64 value1, int64 value2) {
+static int64_t mul_currency(int64_t value1, int64_t value2) {
   return value1 * value2 / CURRENCY_FACTOR;
 }
 
 /*************************************************************************************/
 
-int64 div_currency(int64 value1, int64 value2) {
+static int64_t div_currency(int64_t value1, int64_t value2) {
   return value1 * CURRENCY_FACTOR / value2;
 }
 
@@ -208,7 +197,10 @@ BOOL AlmostEqualFloats(float A, float B, int maxUlps) {
 */
 /*************************************************************************************/
 
-char * test_create_object_1(int *psize) {
+static char * test_create_object_1(int *psize) {
+  int32_t vint32; uint32_t vuint32;
+  int64_t vint64; uint64_t vuint64;
+
   binn *obj=INVALID_BINN, *list=INVALID_BINN;
 
   printf("creating object 1...\n");
@@ -277,7 +269,7 @@ char * test_create_object_1(int *psize) {
 
 /*************************************************************************************/
 
-char * test_create_object_2(int *psize) {
+static char * test_create_object_2(int *psize) {
   binn *obj=INVALID_BINN, *list=INVALID_BINN;
 
   printf("creating object 2...\n");
@@ -302,7 +294,7 @@ char * test_create_object_2(int *psize) {
   vfloat64 = -123456.7895;
   assert(binn_object_set(obj, "double", BINN_DOUBLE, &vfloat64, 0) == TRUE);
 
-  assert(binn_object_set_str(obj, "str", "the value") == TRUE);
+  assert(binn_object_set_str(obj, "str", (char*)"the value") == TRUE);
 
   assert(binn_object_set_bool(obj, "bool_true", TRUE) == TRUE);
   assert(binn_object_set_bool(obj, "bool_false", FALSE) == TRUE);
@@ -333,8 +325,11 @@ char * test_create_object_2(int *psize) {
 
 /*************************************************************************************/
 
-void test_binn_read(void *objptr) {
-  void *listptr;
+static void test_binn_read(void *objptr) {
+  int32_t vint32; uint32_t vuint32;
+  int64_t vint64; uint64_t vuint64;
+
+void *listptr;
   char *ptr;
   binn value={0};
 
@@ -357,7 +352,7 @@ void test_binn_read(void *objptr) {
 
   vint64 = 0;
   assert(binn_object_get(objptr, "int64", BINN_INT64, &vint64, NULL) == TRUE);
-  printf("int64: %" INT64_FORMAT "\n", vint64);
+  printf("int64: %" INT64_FORMAT "\n", (long long int)vint64);
   assert(vint64 == -1234567890123);
 
 
@@ -378,7 +373,7 @@ void test_binn_read(void *objptr) {
 
   vuint64 = 0;
   assert(binn_object_get(objptr, "uint64", BINN_UINT64, &vuint64, NULL) == TRUE);
-  printf("uint64: %" UINT64_FORMAT "\n", vuint64);
+  printf("uint64: %" UINT64_FORMAT "\n", (long long unsigned int)vuint64);
   assert(vuint64 == 1234567890123);
 
 
@@ -433,12 +428,12 @@ void test_binn_read(void *objptr) {
   assert(listptr > objptr);
 
   vint32 = 0;
-  if (binn_list_get(listptr, 2, BINN_INT32, &vint32, NULL) == TRUE);
+  if (binn_list_get(listptr, 2, BINN_INT32, &vint32, NULL) == TRUE) {}
   printf("int32: %d\n", vint32);
   assert(vint32 == 123);
 
   ptr = 0;
-  if (binn_list_get(listptr, 3, BINN_STRING, &ptr, NULL) == TRUE);
+  if (binn_list_get(listptr, 3, BINN_STRING, &ptr, NULL) == TRUE) {}
   printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "this is a string") == 0);
 
@@ -464,7 +459,7 @@ void test_binn_read(void *objptr) {
 
   vint64 = 0;
   assert(binn_object_get_int64(objptr, "int64", &vint64) == TRUE);
-  printf("int64: %" INT64_FORMAT "\n", vint64);
+  printf("int64: %" INT64_FORMAT "\n", (long long int)vint64);
   assert(vint64 == -1234567890123);
 
 
@@ -485,7 +480,7 @@ void test_binn_read(void *objptr) {
 
   vuint64 = 0;
   assert(binn_object_get_uint64(objptr, "uint64", &vuint64) == TRUE);
-  printf("uint64: %" UINT64_FORMAT "\n", vuint64);
+  printf("uint64: %" UINT64_FORMAT "\n", (long long unsigned int)vuint64);
   assert(vuint64 == 1234567890123);
 
 
@@ -517,7 +512,6 @@ void test_binn_read(void *objptr) {
   assert(vint32 == FALSE);
 
 
-  vbool = FALSE;
   assert(binn_object_null(objptr, "null") == TRUE);
 
   assert(binn_object_null(objptr, "bool_true") == FALSE);
@@ -529,12 +523,12 @@ void test_binn_read(void *objptr) {
   assert(listptr > objptr);
 
   vint32 = 0;
-  if (binn_list_get_int32(listptr, 2, &vint32) == TRUE);
+  if (binn_list_get_int32(listptr, 2, &vint32) == TRUE) {}
   printf("int32: %d\n", vint32);
   assert(vint32 == 123);
 
   ptr = 0;
-  if (binn_list_get_str(listptr, 3, &ptr) == TRUE);
+  if (binn_list_get_str(listptr, 3, &ptr) == TRUE) {}
   printf("ptr: (%p) '%s'\n", ptr, ptr);
   assert(strcmp(ptr, "this is a string") == 0);
 
@@ -556,7 +550,7 @@ void test_binn_read(void *objptr) {
   assert(vint8 == -120);
 
   vint64 = binn_object_int64(objptr, "int64");
-  printf("int64: %" INT64_FORMAT "\n", vint64);
+  printf("int64: %" INT64_FORMAT "\n", (long long int)vint64);
   assert(vint64 == -1234567890123);
 
 
@@ -573,7 +567,7 @@ void test_binn_read(void *objptr) {
   assert(vuint8 == 250);
 
   vuint64 = binn_object_uint64(objptr, "uint64");
-  printf("uint64: %" UINT64_FORMAT "\n", vuint64);
+  printf("uint64: %" UINT64_FORMAT "\n", (long long unsigned int)vuint64);
   assert(vuint64 == 1234567890123);
 
 
@@ -622,7 +616,7 @@ void test_binn_read(void *objptr) {
 
   // read as value / binn
 
-  assert(binn_object_get_value(objptr, "int32", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"int32", &value) == TRUE);
 #ifndef BINN_DISABLE_COMPRESS_INT
   assert(value.type == BINN_INT16);
   assert(value.vint16 == -12345);
@@ -631,32 +625,32 @@ void test_binn_read(void *objptr) {
   assert(value.vint32 == -12345);
 #endif
 
-  assert(binn_object_get_value(objptr, "int16", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"int16", &value) == TRUE);
   assert(value.type == BINN_INT16);
   assert(value.vint16 == -258);
 
-  assert(binn_object_get_value(objptr, "int8", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"int8", &value) == TRUE);
   assert(value.type == BINN_INT8);
   assert(value.vint8 == -120);
 
-  assert(binn_object_get_value(objptr, "int64", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"int64", &value) == TRUE);
   assert(value.type == BINN_INT64);
   assert(value.vint64 == -1234567890123);
 
 
-  assert(binn_object_get_value(objptr, "uint32", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"uint32", &value) == TRUE);
   assert(value.type == BINN_UINT32);
   assert(value.vuint32 == 123456);
 
-  assert(binn_object_get_value(objptr, "uint16", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"uint16", &value) == TRUE);
   assert(value.type == BINN_UINT16);
   assert(value.vuint16 == 60500);
 
-  assert(binn_object_get_value(objptr, "uint8", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"uint8", &value) == TRUE);
   assert(value.type == BINN_UINT8);
   assert(value.vuint8 == 250);
 
-  assert(binn_object_get_value(objptr, "uint64", &value) == TRUE);
+  assert(binn_object_get_value(objptr, (char*)"uint64", &value) == TRUE);
   assert(value.type == BINN_UINT64);
   assert(value.vuint64 == 1234567890123);
 
@@ -665,36 +659,36 @@ void test_binn_read(void *objptr) {
 
 /*************************************************************************************/
 
-void init_udts() {
+static void init_udts() {
   binn *obj=INVALID_BINN;
   unsigned short date;
-  uint64 value;
+  uint64_t value;
   void *ptr;
 
-  assert(strcmp(date_to_str(str_to_date("1950-08-15")), "1950-08-15") == 0);
-  assert(strcmp(date_to_str(str_to_date("1900-12-01")), "1900-12-01") == 0);
-  assert(strcmp(date_to_str(str_to_date("2000-10-31")), "2000-10-31") == 0);
-  assert(strcmp(date_to_str(str_to_date("2014-03-19")), "2014-03-19") == 0);
+  assert(strcmp(date_to_str(str_to_date((char*)"1950-08-15")), (char*)"1950-08-15") == 0);
+  assert(strcmp(date_to_str(str_to_date((char*)"1900-12-01")), (char*)"1900-12-01") == 0);
+  assert(strcmp(date_to_str(str_to_date((char*)"2000-10-31")), (char*)"2000-10-31") == 0);
+  assert(strcmp(date_to_str(str_to_date((char*)"2014-03-19")), (char*)"2014-03-19") == 0);
 
-  printf("curr=%s\n", currency_to_str(str_to_currency("123.456")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("123.45")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("123.4")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("123.")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("123")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("1.2")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("0.987")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("0.98")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("0.9")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("0.0")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("0")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("123.4567")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("123.45678")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("123.456789")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency("0.1234")) );
-  printf("curr=%s\n", currency_to_str(str_to_currency(".1234")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123.456")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123.45")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123.4")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123.")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"1.2")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"0.987")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"0.98")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"0.9")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"0.0")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"0")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123.4567")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123.45678")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"123.456789")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)"0.1234")) );
+  printf("curr=%s\n", currency_to_str(str_to_currency((char*)".1234")) );
 
-  printf("1.1 * 2.5 = %s\n", currency_to_str(mul_currency(str_to_currency("1.1"), float_to_currency(2.5))) );
-  printf("12 / 5 = %s\n", currency_to_str(div_currency(str_to_currency("12"), float_to_currency(5))) );
+  printf("1.1 * 2.5 = %s\n", currency_to_str(mul_currency(str_to_currency((char*)"1.1"), float_to_currency(2.5))) );
+  printf("12 / 5 = %s\n", currency_to_str(div_currency(str_to_currency((char*)"12"), float_to_currency(5))) );
 
 
   //assert(binn_register_type(MY_DATE, BINN_STORAGE_WORD) == TRUE);
@@ -707,61 +701,61 @@ void init_udts() {
   obj = binn_object();
   assert(obj != NULL);
 
-  date = str_to_date("1950-08-15");
+  date = str_to_date((char*)"1950-08-15");
   printf(" date 1: %d %s\n", date, date_to_str(date));
   assert(binn_object_set(obj, "date1", MY_DATE, &date, 0) == TRUE);
   assert(binn_object_set(obj, "date1", MY_DATE, &date, 0) == FALSE);
 
-  date = str_to_date("1999-12-31");
+  date = str_to_date((char*)"1999-12-31");
   printf(" date 2: %d %s\n", date, date_to_str(date));
-  binn_object_set(obj, "date2", MY_DATE, &date, 0);
+  binn_object_set(obj, (char*)"date2", MY_DATE, &date, 0);
 
 
-  value = str_to_currency("123.456");
-  printf(" curr 1: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
-  binn_object_set(obj, "curr1", MY_CURRENCY, &value, 0);
+  value = str_to_currency((char*)"123.456");
+  printf(" curr 1: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
+  binn_object_set(obj, (char*)"curr1", MY_CURRENCY, &value, 0);
 
-  value = str_to_currency("123.45");
-  printf(" curr 2: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
-  binn_object_set(obj, "curr2", MY_CURRENCY, &value, 0);
+  value = str_to_currency((char*)"123.45");
+  printf(" curr 2: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
+  binn_object_set(obj, (char*)"curr2", MY_CURRENCY, &value, 0);
 
-  value = str_to_currency("12.5");
-  printf(" curr 3: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
-  binn_object_set(obj, "curr3", MY_CURRENCY, &value, 0);
+  value = str_to_currency((char*)"12.5");
+  printf(" curr 3: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
+  binn_object_set(obj, (char*)"curr3", MY_CURRENCY, &value, 0);
 
-  value = str_to_currency("5");
-  printf(" curr 4: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
-  binn_object_set(obj, "curr4", MY_CURRENCY, &value, 0);
+  value = str_to_currency((char*)"5");
+  printf(" curr 4: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
+  binn_object_set(obj, (char*)"curr4", MY_CURRENCY, &value, 0);
 
-  value = str_to_currency("0.75");
-  printf(" curr 5: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
-  binn_object_set(obj, "curr5", MY_CURRENCY, &value, 0);
+  value = str_to_currency((char*)"0.75");
+  printf(" curr 5: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
+  binn_object_set(obj, (char*)"curr5", MY_CURRENCY, &value, 0);
 
 
   ptr = binn_ptr(obj);
 
 
-  assert(binn_object_get(ptr, "date1", MY_DATE, &date, NULL) == TRUE);
+  assert(binn_object_get(ptr, (char*)"date1", MY_DATE, &date, NULL) == TRUE);
   printf(" date 1: %d %s\n", date, date_to_str(date));
 
-  assert(binn_object_get(ptr, "date2", MY_DATE, &date, NULL) == TRUE);
+  assert(binn_object_get(ptr, (char*)"date2", MY_DATE, &date, NULL) == TRUE);
   printf(" date 2: %d %s\n", date, date_to_str(date));
 
 
-  assert(binn_object_get(ptr, "curr1", MY_CURRENCY, &value, NULL) == TRUE);
-  printf(" curr 1: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
+  assert(binn_object_get(ptr, (char*)"curr1", MY_CURRENCY, &value, NULL) == TRUE);
+  printf(" curr 1: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
 
-  assert(binn_object_get(ptr, "curr2", MY_CURRENCY, &value, NULL) == TRUE);
-  printf(" curr 2: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
+  assert(binn_object_get(ptr, (char*)"curr2", MY_CURRENCY, &value, NULL) == TRUE);
+  printf(" curr 2: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
 
-  assert(binn_object_get(ptr, "curr3", MY_CURRENCY, &value, NULL) == TRUE);
-  printf(" curr 3: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
+  assert(binn_object_get(ptr, (char*)"curr3", MY_CURRENCY, &value, NULL) == TRUE);
+  printf(" curr 3: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
 
-  assert(binn_object_get(ptr, "curr4", MY_CURRENCY, &value, NULL) == TRUE);
-  printf(" curr 4: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
+  assert(binn_object_get(ptr, (char*)"curr4", MY_CURRENCY, &value, NULL) == TRUE);
+  printf(" curr 4: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
 
-  assert(binn_object_get(ptr, "curr5", MY_CURRENCY, &value, NULL) == TRUE);
-  printf(" curr 5: %" UINT64_FORMAT " %s\n", value, currency_to_str(value));
+  assert(binn_object_get(ptr, (char*)"curr5", MY_CURRENCY, &value, NULL) == TRUE);
+  printf(" curr 5: %" UINT64_FORMAT " %s\n", (long long unsigned int)value, currency_to_str(value));
 
 
   binn_free(obj);
@@ -769,10 +763,9 @@ void init_udts() {
 }
 
 /*************************************************************************************/
-
-BOOL copy_int_value(void *psource, void *pdest, int source_type, int dest_type);
-
-void test_int_conversion() {
+static void test_int_conversion() {
+  int32_t vint32; uint32_t vuint32;
+  int64_t vint64; uint64_t vuint64;
 
   printf("testing integer conversion...");
 
@@ -1209,8 +1202,7 @@ void test_int_conversion() {
 }
 
 /*************************************************************************************/
-
-void test_binn_int_conversion() {
+static void test_binn_int_conversion() {
   binn *obj=INVALID_BINN;
   void *ptr;
 
@@ -1280,13 +1272,12 @@ void test_binn_int_conversion() {
 }
 
 /*************************************************************************************/
-
-void test_value_conversion() {
+static void test_value_conversion() {
   binn *value;
   char *ptr, blob[64] = "test blob";
   void *pblob;
   int size, vint32;
-  int64 vint64;
+  int64_t vint64;
   double vdouble;
   BOOL vbool;
 
@@ -1294,7 +1285,7 @@ void test_value_conversion() {
 
   /* test string values */
 
-  ptr = "static string";
+  ptr = (char*)"static string";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(value->type == BINN_STRING);
@@ -1303,7 +1294,7 @@ void test_value_conversion() {
   assert(value->freefn == NULL);
   binn_free(value);
 
-  ptr = "transient string";
+  ptr = (char*)"transient string";
   value = binn_string(ptr, BINN_TRANSIENT);
   assert(value != NULL);
   assert(value->type == BINN_STRING);
@@ -1359,7 +1350,7 @@ void test_value_conversion() {
 
   /* test conversions */
 
-  ptr = "123";
+  ptr = (char*)"123";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(value->type == BINN_STRING);
@@ -1385,7 +1376,7 @@ void test_value_conversion() {
   binn_free(value);
 
 
-  ptr = "-456";
+  ptr = (char*)"-456";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(value->type == BINN_STRING);
@@ -1411,7 +1402,7 @@ void test_value_conversion() {
   binn_free(value);
 
 
-  ptr = "-4.56";
+  ptr = (char*)"-4.56";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(value->type == BINN_STRING);
@@ -1439,7 +1430,7 @@ void test_value_conversion() {
 
   // to boolean
 
-  ptr = "yes";
+  ptr = (char*)"yes";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_str(value) == ptr);
@@ -1447,49 +1438,49 @@ void test_value_conversion() {
   assert(vbool == TRUE);
   binn_free(value);
 
-  ptr = "no";
+  ptr = (char*)"no";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_bool(value, &vbool) == TRUE);
   assert(vbool == FALSE);
   binn_free(value);
 
-  ptr = "on";
+  ptr = (char*)"on";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_bool(value, &vbool) == TRUE);
   assert(vbool == TRUE);
   binn_free(value);
 
-  ptr = "off";
+  ptr = (char*)"off";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_bool(value, &vbool) == TRUE);
   assert(vbool == FALSE);
   binn_free(value);
 
-  ptr = "true";
+  ptr = (char*)"true";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_bool(value, &vbool) == TRUE);
   assert(vbool == TRUE);
   binn_free(value);
 
-  ptr = "false";
+  ptr = (char*)"false";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_bool(value, &vbool) == TRUE);
   assert(vbool == FALSE);
   binn_free(value);
 
-  ptr = "1";
+  ptr = (char*)"1";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_bool(value, &vbool) == TRUE);
   assert(vbool == TRUE);
   binn_free(value);
 
-  ptr = "0";
+  ptr = (char*)"0";
   value = binn_string(ptr, BINN_STATIC);
   assert(value != NULL);
   assert(binn_get_bool(value, &vbool) == TRUE);
@@ -1596,7 +1587,7 @@ void test_value_conversion() {
   value = binn_double(-345.678);
   assert(value != NULL);
   assert(value->type == BINN_DOUBLE);
-  assert(value->vdouble == -345.678);
+  assert(FLOAT_COMP(value->vdouble,-345.678));
   assert(value->freefn == NULL);
   //
   assert(binn_get_int32(value, &vint32) == TRUE);
@@ -1609,7 +1600,7 @@ void test_value_conversion() {
   assert(vbool == TRUE);
   // check that the type is the same
   assert(value->type == BINN_DOUBLE);
-  assert(value->vdouble == -345.678);
+  assert(FLOAT_COMP(value->vdouble,-345.678));
   assert(value->freefn == NULL);
   // convert the value to string
   ptr = binn_get_str(value);
@@ -1626,7 +1617,7 @@ void test_value_conversion() {
   value = binn_double(0.0);
   assert(value != NULL);
   assert(value->type == BINN_DOUBLE);
-  assert(value->vdouble == 0.0);
+  assert(FLOAT_COMP(value->vdouble,0.0));
   assert(value->freefn == NULL);
   //
   assert(binn_get_int32(value, &vint32) == TRUE);
@@ -1639,7 +1630,7 @@ void test_value_conversion() {
   assert(vbool == FALSE);
   // check that the type is the same
   assert(value->type == BINN_DOUBLE);
-  assert(value->vdouble == 0.0);
+  assert(FLOAT_COMP(value->vdouble,0.0));
   assert(value->freefn == NULL);
   // convert the value to string
   ptr = binn_get_str(value);
@@ -1721,7 +1712,7 @@ void test_value_conversion() {
 
 /*************************************************************************************/
 
-void test_value_copy() {
+static void test_value_copy(void) {
 
   printf("testing binn value copy... ");
 
@@ -1733,7 +1724,7 @@ void test_value_copy() {
 
 /*************************************************************************************/
 
-void test_virtual_types() {
+static void test_virtual_types(void) {
   binn *list=INVALID_BINN;
   void *ptr;
   int storage_type, extra_type;
@@ -1775,7 +1766,7 @@ void test_virtual_types() {
 
 /*************************************************************************************/
 
-void test_binn_iter(BOOL use_int_compression) {
+static void test_binn_iter(BOOL use_int_compression) {
   binn *list=INVALID_BINN, *list2=INVALID_BINN;
   binn *obj=INVALID_BINN, *map=INVALID_BINN;
   binn_iter iter;
@@ -1784,7 +1775,7 @@ void test_binn_iter(BOOL use_int_compression) {
   void *ptr, *blob_ptr;
   char key[256];
 
-  blob_ptr = "key\0value\0\0";
+  blob_ptr = (void*)"key\0value\0\0";
   blob_size = 11;
 
   printf("testing binn sequential read (use_int_compression = %d)... ", use_int_compression);
@@ -1836,7 +1827,7 @@ void test_binn_iter(BOOL use_int_compression) {
   assert(binn_object_set_bool(obj, "g", TRUE) == TRUE);
   assert(binn_object_set_bool(obj, "h", FALSE) == TRUE);
   assert(binn_object_set_null(obj, "i") == TRUE);
-  assert(binn_object_set_str(obj, "j", "testing...") == TRUE);
+  assert(binn_object_set_str(obj, "j", (char*)"testing...") == TRUE);
   assert(binn_object_set_blob(obj, "k", (char *)blob_ptr, blob_size) == TRUE);
   assert(binn_object_set_list(obj, "l", list2) == TRUE);
 
@@ -2207,7 +2198,7 @@ void test_binn_iter(BOOL use_int_compression) {
 
 /*************************************************************************************/
 
-void test_binn2() {
+void test_binn2(void) {
   char *obj1ptr, *obj2ptr;
   int  obj1size, obj2size;
 

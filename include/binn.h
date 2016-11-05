@@ -11,72 +11,7 @@
 extern "C" {
 #endif
 
-
-#ifndef NULL
-#ifdef __cplusplus
-#define NULL    0
-#else
-#define NULL    ((void *)0)
-#endif
-#endif
-
-#ifndef TRUE
-#define TRUE  1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef BOOL
-typedef int BOOL;
-#endif
-
-#ifndef APIENTRY
- #ifdef _WIN32
-  #define APIENTRY __stdcall
- #else
-  //#define APIENTRY __attribute__((stdcall))
-  #define APIENTRY 
- #endif
-#endif
-
-#ifndef BINN_PRIVATE
- #ifdef DEBUG
-  #define BINN_PRIVATE
- #else
-  #define BINN_PRIVATE  static
- #endif
-#endif
-
-#ifdef _MSC_VER
-  #define INLINE         __inline
-  #define ALWAYS_INLINE  __forceinline
-#else
-  // you can change to 'extern inline' if using the gcc option -flto
-  #define INLINE         static inline
-  #define ALWAYS_INLINE  static inline __attribute__((always_inline))
-#endif
-
-#ifndef int64
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-  typedef __int64 int64;
-  typedef unsigned __int64 uint64;
-#else
-  typedef long long int int64;
-  typedef unsigned long long int uint64;
-#endif
-#endif
-
-#ifdef _WIN32
-#define INT64_FORMAT  "I64i"
-#define UINT64_FORMAT "I64u"
-#define INT64_HEX_FORMAT  "I64x"
-#else
-#define INT64_FORMAT  "lli"
-#define UINT64_FORMAT "llu"
-#define INT64_HEX_FORMAT  "llx"
-#endif
+#include <binn_types.h>
 
 
 // BINN CONSTANTS  ----------------------------------------
@@ -230,11 +165,11 @@ struct binn_struct {
     signed char    vint8;
     signed short   vint16;
     signed int     vint32;
-    int64          vint64;
+    int64_t          vint64;
     unsigned char  vuint8;
     unsigned short vuint16;
     unsigned int   vuint32;
-    uint64         vuint64;
+    uint64_t         vuint64;
     //
     signed char    vchar;
     unsigned char  vuchar;
@@ -259,94 +194,94 @@ typedef struct binn_struct binn;
 // --- GENERAL FUNCTIONS  ----------------------------------------------------------
 
 
-void   APIENTRY binn_set_alloc_functions(void* (*new_malloc)(size_t), void* (*new_realloc)(void*,size_t), void (*new_free)(void*));
+void   binn_set_alloc_functions(void* (*new_malloc)(size_t), void* (*new_realloc)(void*,size_t), void (*new_free)(void*));
 
-int    APIENTRY binn_create_type(int storage_type, int data_type_index);
-BOOL   APIENTRY binn_get_type_info(int long_type, int *pstorage_type, int *pextra_type);
+int    binn_create_type(int storage_type, int data_type_index);
+BOOL   binn_get_type_info(int long_type, int *pstorage_type, int *pextra_type);
 
-int    APIENTRY binn_get_write_storage(int type);
-int    APIENTRY binn_get_read_storage(int type);
+int    binn_get_write_storage(int type);
+int    binn_get_read_storage(int type);
 
-BOOL   APIENTRY binn_is_container(binn *item);
+BOOL   binn_is_container(binn*item);
 
 
 // --- WRITE FUNCTIONS  ------------------------------------------------------------
 
 // create a new binn allocating memory for the structure
-binn * APIENTRY binn_new(int type, int size, void *buffer);
-binn * APIENTRY binn_list();
-binn * APIENTRY binn_map();
-binn * APIENTRY binn_object();
+extern binn* binn_new(const int type, const int size, void *buffer);
+extern binn* binn_list(void);
+extern binn* binn_map(void);
+extern binn* binn_object(void);
 
 // create a new binn storing the structure on the stack
-BOOL APIENTRY binn_create(binn *item, int type, int size, void *buffer);
-BOOL APIENTRY binn_create_list(binn *list);
-BOOL APIENTRY binn_create_map(binn *map);
-BOOL APIENTRY binn_create_object(binn *object);
+extern BOOL binn_create(binn* item, const int type, const int size, void *buffer);
+extern BOOL binn_create_list(binn* list);
+extern BOOL binn_create_map(binn* map);
+extern BOOL binn_create_object(binn* object);
 
 
-BOOL APIENTRY binn_list_add_new(binn *list, binn *value);
-BOOL APIENTRY binn_map_set_new(binn *map, int id, binn *value);
-BOOL APIENTRY binn_object_set_new(binn *obj, char *key, binn *value);
+extern BOOL binn_list_add_new(binn* list, binn* value);
+extern BOOL binn_map_set_new(binn* map, int id, binn* value);
+extern BOOL binn_object_set_new(binn* obj, const char const *key, binn* value);
 
 
 // extended interface
 
-BOOL   APIENTRY binn_list_add(binn *list, int type, void *pvalue, int size);
-BOOL   APIENTRY binn_map_set(binn *map, int id, int type, void *pvalue, int size);
-BOOL   APIENTRY binn_object_set(binn *obj, char *key, int type, void *pvalue, int size);
-
+extern BOOL   binn_list_add(binn* list, const int type, const void const *pvalue, const int size);
+extern BOOL   binn_map_set(binn* map, const int id, const int type, const void const *pvalue, const int size);
+extern BOOL   binn_object_set(binn* obj, const char const *key, const int type, const void const *pvalue, const int size);
+extern BOOL   binn_add_value(binn *item, int binn_type, int id, char *name, int type, void *pvalue, int size);
 
 // release memory
 
-void   APIENTRY binn_free(binn *item);
-void * APIENTRY binn_release(binn *item); // free the binn structure but keeps the binn buffer allocated, returning a pointer to it. use the free function to release the buffer later
+extern void   binn_free(binn*item);
+extern void* binn_release(binn*item); // free the binn structure but keeps the binn buffer allocated, returning a pointer to it. use the free function to release the buffer later
 
 
 // --- CREATING VALUES ---------------------------------------------------
 
-binn * APIENTRY binn_value(int type, void *pvalue, int size, binn_mem_free freefn);
+extern binn* binn_value(int type, void *pvalue, int size, binn_mem_free freefn);
 
-ALWAYS_INLINE binn * binn_int8(signed char value) {
+ALWAYS_INLINE binn* binn_int8(signed char value) {
   return binn_value(BINN_INT8, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_int16(short value) {
+ALWAYS_INLINE binn* binn_int16(short value) {
   return binn_value(BINN_INT16, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_int32(int value) {
+ALWAYS_INLINE binn* binn_int32(int value) {
   return binn_value(BINN_INT32, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_int64(int64 value) {
+ALWAYS_INLINE binn* binn_int64(int64_t value) {
   return binn_value(BINN_INT64, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_uint8(unsigned char value) {
+ALWAYS_INLINE binn* binn_uint8(unsigned char value) {
   return binn_value(BINN_UINT8, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_uint16(unsigned short value) {
+ALWAYS_INLINE binn* binn_uint16(unsigned short value) {
   return binn_value(BINN_UINT16, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_uint32(unsigned int value) {
+ALWAYS_INLINE binn* binn_uint32(unsigned int value) {
   return binn_value(BINN_UINT32, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_uint64(uint64 value) {
+ALWAYS_INLINE binn* binn_uint64(uint64_t value) {
   return binn_value(BINN_UINT64, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_float(float value) {
+ALWAYS_INLINE binn* binn_float(float value) {
   return binn_value(BINN_FLOAT, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_double(double value) {
+ALWAYS_INLINE binn* binn_double(double value) {
   return binn_value(BINN_DOUBLE, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_bool(BOOL value) {
+ALWAYS_INLINE binn* binn_bool(BOOL value) {
   return binn_value(BINN_BOOL, &value, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_null() {
+ALWAYS_INLINE binn* binn_null(void) {
   return binn_value(BINN_NULL, NULL, 0, NULL);
 }
-ALWAYS_INLINE binn * binn_string(char *str, binn_mem_free freefn) {
+ALWAYS_INLINE binn* binn_string(char *str, binn_mem_free freefn) {
   return binn_value(BINN_STRING, str, 0, freefn);
 }
-ALWAYS_INLINE binn * binn_blob(void *ptr, int size, binn_mem_free freefn) {
+ALWAYS_INLINE binn* binn_blob(void *ptr, int size, binn_mem_free freefn) {
   return binn_value(BINN_BLOB, ptr, size, freefn);
 }
 
@@ -354,101 +289,101 @@ ALWAYS_INLINE binn * binn_blob(void *ptr, int size, binn_mem_free freefn) {
 // --- READ FUNCTIONS  -------------------------------------------------------------
 
 // these functions accept pointer to the binn structure and pointer to the binn buffer
-void * APIENTRY binn_ptr(void *ptr);
-int    APIENTRY binn_size(void *ptr);
-int    APIENTRY binn_type(void *ptr);
-int    APIENTRY binn_count(void *ptr);
+extern void*  binn_ptr(const void const *ptr);
+extern int    binn_size(const void const *ptr);
+extern int    binn_type(const void const *ptr);
+extern int    binn_count(const void const *ptr);
 
-BOOL   APIENTRY binn_is_valid(void *ptr, int *ptype, int *pcount, int *psize);
+extern BOOL   binn_is_valid(void *ptr, int *ptype, int *pcount, int *psize);
 
-BOOL   APIENTRY binn_is_struct(void *ptr);
+extern BOOL   binn_is_struct(void *ptr);
 
 
 // Loading a binn buffer into a binn value - this is optional
 
-BOOL   APIENTRY binn_load(void *data, binn *item);  // on stack
-binn * APIENTRY binn_open(void *data);              // allocated
+extern BOOL   binn_load(void *data, binn*item);  // on stack
+extern binn* binn_open(void *data);              // allocated
 
 
 // easiest interface to use, but don't check if the value is there
 
-signed char    APIENTRY binn_list_int8(void *list, int pos);
-short          APIENTRY binn_list_int16(void *list, int pos);
-int            APIENTRY binn_list_int32(void *list, int pos);
-int64          APIENTRY binn_list_int64(void *list, int pos);
-unsigned char  APIENTRY binn_list_uint8(void *list, int pos);
-unsigned short APIENTRY binn_list_uint16(void *list, int pos);
-unsigned int   APIENTRY binn_list_uint32(void *list, int pos);
-uint64         APIENTRY binn_list_uint64(void *list, int pos);
-float          APIENTRY binn_list_float(void *list, int pos);
-double         APIENTRY binn_list_double(void *list, int pos);
-BOOL           APIENTRY binn_list_bool(void *list, int pos);
-BOOL           APIENTRY binn_list_null(void *list, int pos);
-char *         APIENTRY binn_list_str(void *list, int pos);
-void *         APIENTRY binn_list_blob(void *list, int pos, int *psize);
-void *         APIENTRY binn_list_list(void *list, int pos);
-void *         APIENTRY binn_list_map(void *list, int pos);
-void *         APIENTRY binn_list_object(void *list, int pos);
+extern signed char    binn_list_int8(void *list, int pos);
+extern short          binn_list_int16(void *list, int pos);
+extern int            binn_list_int32(void *list, int pos);
+extern int64_t          binn_list_int64(void *list, int pos);
+extern unsigned char  binn_list_uint8(void *list, int pos);
+extern unsigned short binn_list_uint16(void *list, int pos);
+extern unsigned int   binn_list_uint32(void *list, int pos);
+extern uint64_t         binn_list_uint64(void *list, int pos);
+extern float          binn_list_float(void *list, int pos);
+extern double         binn_list_double(void *list, int pos);
+extern BOOL           binn_list_bool(void *list, int pos);
+extern BOOL           binn_list_null(void *list, int pos);
+extern char*         binn_list_str(void *list, int pos);
+extern void*         binn_list_blob(void *list, int pos, int *psize);
+extern void*         binn_list_list(void *list, int pos);
+extern void*         binn_list_map(void *list, int pos);
+extern void*         binn_list_object(void *list, int pos);
 
-signed char    APIENTRY binn_map_int8(void *map, int id);
-short          APIENTRY binn_map_int16(void *map, int id);
-int            APIENTRY binn_map_int32(void *map, int id);
-int64          APIENTRY binn_map_int64(void *map, int id);
-unsigned char  APIENTRY binn_map_uint8(void *map, int id);
-unsigned short APIENTRY binn_map_uint16(void *map, int id);
-unsigned int   APIENTRY binn_map_uint32(void *map, int id);
-uint64         APIENTRY binn_map_uint64(void *map, int id);
-float          APIENTRY binn_map_float(void *map, int id);
-double         APIENTRY binn_map_double(void *map, int id);
-BOOL           APIENTRY binn_map_bool(void *map, int id);
-BOOL           APIENTRY binn_map_null(void *map, int id);
-char *         APIENTRY binn_map_str(void *map, int id);
-void *         APIENTRY binn_map_blob(void *map, int id, int *psize);
-void *         APIENTRY binn_map_list(void *map, int id);
-void *         APIENTRY binn_map_map(void *map, int id);
-void *         APIENTRY binn_map_object(void *map, int id);
+extern signed char    binn_map_int8(void *map, int id);
+extern short          binn_map_int16(void *map, int id);
+extern int            binn_map_int32(void *map, int id);
+extern int64_t          binn_map_int64(void *map, int id);
+extern unsigned char  binn_map_uint8(void *map, int id);
+extern unsigned short binn_map_uint16(void *map, int id);
+extern unsigned int   binn_map_uint32(void *map, int id);
+extern uint64_t         binn_map_uint64(void *map, int id);
+extern float          binn_map_float(void *map, int id);
+extern double         binn_map_double(void *map, int id);
+extern BOOL           binn_map_bool(void *map, int id);
+extern BOOL           binn_map_null(void *map, int id);
+extern char*         binn_map_str(void *map, int id);
+extern void*         binn_map_blob(void *map, int id, int *psize);
+extern void*         binn_map_list(void *map, int id);
+extern void*         binn_map_map(void *map, int id);
+extern void*         binn_map_object(void *map, int id);
 
-signed char    APIENTRY binn_object_int8(void *obj, char *key);
-short          APIENTRY binn_object_int16(void *obj, char *key);
-int            APIENTRY binn_object_int32(void *obj, char *key);
-int64          APIENTRY binn_object_int64(void *obj, char *key);
-unsigned char  APIENTRY binn_object_uint8(void *obj, char *key);
-unsigned short APIENTRY binn_object_uint16(void *obj, char *key);
-unsigned int   APIENTRY binn_object_uint32(void *obj, char *key);
-uint64         APIENTRY binn_object_uint64(void *obj, char *key);
-float          APIENTRY binn_object_float(void *obj, char *key);
-double         APIENTRY binn_object_double(void *obj, char *key);
-BOOL           APIENTRY binn_object_bool(void *obj, char *key);
-BOOL           APIENTRY binn_object_null(void *obj, char *key);
-char *         APIENTRY binn_object_str(void *obj, char *key);
-void *         APIENTRY binn_object_blob(void *obj, char *key, int *psize);
-void *         APIENTRY binn_object_list(void *obj, char *key);
-void *         APIENTRY binn_object_map(void *obj, char *key);
-void *         APIENTRY binn_object_object(void *obj, char *key);
+extern signed char    binn_object_int8(void *obj, const char const *key);
+extern short          binn_object_int16(void *obj, const char const *key);
+extern int            binn_object_int32(void *obj, const char const *key);
+extern int64_t          binn_object_int64(void *obj, const char const *key);
+extern unsigned char  binn_object_uint8(void *obj, const char const *key);
+extern unsigned short binn_object_uint16(void *obj, const char const *key);
+extern unsigned int   binn_object_uint32(void *obj, const char const *key);
+extern uint64_t         binn_object_uint64(void *obj, const char const *key);
+extern float          binn_object_float(void *obj, const char const *key);
+extern double         binn_object_double(void *obj, const char const *key);
+extern BOOL           binn_object_bool(void *obj, const char const *key);
+extern BOOL           binn_object_null(void *obj, const char const *key);
+extern char*         binn_object_str(void *obj, const char const *key);
+extern void*         binn_object_blob(void *obj, const char const *key, int *psize);
+extern void*         binn_object_list(void *obj, const char const *key);
+extern void*         binn_object_map(void *obj, const char const *key);
+extern void*         binn_object_object(void *obj, const char const *key);
 
 
 // return a pointer to an allocated binn structure - must be released with the free() function or equivalent set in binn_set_alloc_functions()
-binn * APIENTRY binn_list_value(void *list, int pos);
-binn * APIENTRY binn_map_value(void *map, int id);
-binn * APIENTRY binn_object_value(void *obj, char *key);
+extern binn* binn_list_value(void *list, int pos);
+extern binn* binn_map_value(void *map, int id);
+extern binn* binn_object_value(void *obj, const char const *key);
 
 // read the value to a binn structure on the stack
-BOOL APIENTRY binn_list_get_value(void* list, int pos, binn *value);
-BOOL APIENTRY binn_map_get_value(void* map, int id, binn *value);
-BOOL APIENTRY binn_object_get_value(void *obj, char *key, binn *value);
+extern BOOL binn_list_get_value(void* list, int pos, binn* value);
+extern BOOL binn_map_get_value(void* map, int id, binn* value);
+extern BOOL binn_object_get_value(void *obj, const char const *key, binn* value);
 
 // single interface - these functions check the data type
-BOOL APIENTRY binn_list_get(void *list, int pos, int type, void *pvalue, int *psize);
-BOOL APIENTRY binn_map_get(void *map, int id, int type, void *pvalue, int *psize);
-BOOL APIENTRY binn_object_get(void *obj, char *key, int type, void *pvalue, int *psize);
+extern BOOL binn_list_get(void *list, int pos, int type, void *pvalue, int *psize);
+extern BOOL binn_map_get(void *map, int id, int type, void *pvalue, int *psize);
+extern BOOL binn_object_get(void *obj, const char const *key, int type, void *pvalue, int *psize);
 
 // these 3 functions return a pointer to the value and the data type
 // they are thread-safe on big-endian devices
 // on little-endian devices they are thread-safe only to return pointers to list, map, object, blob and strings
 // the returned pointer to 16, 32 and 64 bits values must be used only by single-threaded applications
-void * APIENTRY binn_list_read(void *list, int pos, int *ptype, int *psize);
-void * APIENTRY binn_map_read(void *map, int id, int *ptype, int *psize);
-void * APIENTRY binn_object_read(void *obj, char *key, int *ptype, int *psize);
+extern void* binn_list_read(void *list, int pos, int *ptype, int *psize);
+extern void* binn_map_read(void *map, int id, int *ptype, int *psize);
+extern void* binn_object_read(void *obj, const char const *key, int *ptype, int *psize);
 
 
 // READ PAIR FUNCTIONS
@@ -456,19 +391,19 @@ void * APIENTRY binn_object_read(void *obj, char *key, int *ptype, int *psize);
 // these functions use base 1 in the 'pos' argument
 
 // on stack
-BOOL APIENTRY binn_map_get_pair(void *map, int pos, int *pid, binn *value);
-BOOL APIENTRY binn_object_get_pair(void *obj, int pos, char *pkey, binn *value);  // must free the memory returned in the pkey
+extern BOOL binn_map_get_pair(void *map, int pos, int *pid, binn* value);
+extern BOOL binn_object_get_pair(void *obj, int pos, char *pkey, binn* value);  // must free the memory returned in the pkey
 
 // allocated
-binn * APIENTRY binn_map_pair(void *map, int pos, int *pid);
-binn * APIENTRY binn_object_pair(void *obj, int pos, char *pkey);  // must free the memory returned in the pkey
+extern binn* binn_map_pair(void *map, int pos, int *pid);
+extern binn* binn_object_pair(void *obj, int pos, char *pkey);  // must free the memory returned in the pkey
 
 // these 2 functions return a pointer to the value and the data type
 // they are thread-safe on big-endian devices
 // on little-endian devices they are thread-safe only to return pointers to list, map, object, blob and strings
 // the returned pointer to 16, 32 and 64 bits values must be used only by single-threaded applications
-void * APIENTRY binn_map_read_pair(void *ptr, int pos, int *pid, int *ptype, int *psize);
-void * APIENTRY binn_object_read_pair(void *ptr, int pos, char *pkey, int *ptype, int *psize);
+extern void* binn_map_read_pair(void *ptr, int pos, int *pid, int *ptype, int *psize);
+extern void* binn_object_read_pair(void *ptr, int pos, char *pkey, int *ptype, int *psize);
 
 
 // SEQUENTIAL READ FUNCTIONS
@@ -481,25 +416,25 @@ typedef struct binn_iter_struct {
     int   current;
 } binn_iter;
 
-BOOL   APIENTRY binn_iter_init(binn_iter *iter, void *pbuf, int type);
+extern BOOL   binn_iter_init(binn_iter *iter, void *pbuf, int type);
 
 // allocated
-binn * APIENTRY binn_list_next_value(binn_iter *iter);
-binn * APIENTRY binn_map_next_value(binn_iter *iter, int *pid);
-binn * APIENTRY binn_object_next_value(binn_iter *iter, char *pkey);  // the key must be declared as: char key[256];
+extern binn* binn_list_next_value(binn_iter *iter);
+extern binn* binn_map_next_value(binn_iter *iter, int *pid);
+extern binn* binn_object_next_value(binn_iter *iter, char *pkey);  // the key must be declared as: char key[256];
 
 // on stack
-BOOL   APIENTRY binn_list_next(binn_iter *iter, binn *value);
-BOOL   APIENTRY binn_map_next(binn_iter *iter, int *pid, binn *value);
-BOOL   APIENTRY binn_object_next(binn_iter *iter, char *pkey, binn *value);  // the key must be declared as: char key[256];
+extern BOOL   binn_list_next(binn_iter *iter, binn* value);
+extern BOOL   binn_map_next(binn_iter *iter, int *pid, binn* value);
+extern BOOL   binn_object_next(binn_iter *iter, char *pkey, binn* value);  // the key must be declared as: char key[256];
 
 // these 3 functions return a pointer to the value and the data type
 // they are thread-safe on big-endian devices
 // on little-endian devices they are thread-safe only to return pointers to list, map, object, blob and strings
 // the returned pointer to 16, 32 and 64 bits values must be used only by single-threaded applications
-void * APIENTRY binn_list_read_next(binn_iter *iter, int *ptype, int *psize);
-void * APIENTRY binn_map_read_next(binn_iter *iter, int *pid, int *ptype, int *psize);
-void * APIENTRY binn_object_read_next(binn_iter *iter, char *pkey, int *ptype, int *psize);  // the key must be declared as: char key[256];
+extern void* binn_list_read_next(binn_iter *iter, int *ptype, int *psize);
+extern void* binn_map_read_next(binn_iter *iter, int *pid, int *ptype, int *psize);
+extern void* binn_object_read_next(binn_iter *iter, char *pkey, int *ptype, int *psize);  // the key must be declared as: char key[256];
 
 
 // --- MACROS ------------------------------------------------------------
@@ -525,8 +460,8 @@ void * APIENTRY binn_object_read_next(binn_iter *iter, char *pkey, int *ptype, i
 
 //#define binn_set_string(item,str,pfree)    do { (item)->type = BINN_STRING; (item)->ptr = str; (item)->freefn = pfree; } while (0)
 //#define binn_set_blob(item,ptr,size,pfree) do { (item)->type = BINN_BLOB;   (item)->ptr = ptr; (item)->freefn = pfree; (item)->size = size; } while (0)
-BOOL APIENTRY binn_set_string(binn *item, char *str, binn_mem_free pfree);
-BOOL APIENTRY binn_set_blob(binn *item, void *ptr, int size, binn_mem_free pfree);
+extern BOOL binn_set_string(binn*item, char *str, binn_mem_free pfree);
+extern BOOL binn_set_blob(binn*item, void *ptr, int size, binn_mem_free pfree);
 
 
 //#define binn_double(value) {       (item)->type = BINN_DOUBLE; (item)->vdouble = value; (item)->ptr = &((item)->vdouble) }
@@ -558,172 +493,172 @@ BOOL APIENTRY binn_set_blob(binn *item, void *ptr, int size, binn_mem_free pfree
 /*** SET FUNCTIONS *******************************************************************/
 /*************************************************************************************/
 
-ALWAYS_INLINE BOOL binn_list_add_int8(binn *list, signed char value) {
+ALWAYS_INLINE BOOL binn_list_add_int8(binn* list, signed char value) {
   return binn_list_add(list, BINN_INT8, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_int16(binn *list, short value) {
+ALWAYS_INLINE BOOL binn_list_add_int16(binn* list, short value) {
   return binn_list_add(list, BINN_INT16, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_int32(binn *list, int value) {
+ALWAYS_INLINE BOOL binn_list_add_int32(binn* list, int value) {
   return binn_list_add(list, BINN_INT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_int64(binn *list, int64 value) {
+ALWAYS_INLINE BOOL binn_list_add_int64(binn* list, int64_t value) {
   return binn_list_add(list, BINN_INT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_uint8(binn *list, unsigned char value) {
+ALWAYS_INLINE BOOL binn_list_add_uint8(binn* list, unsigned char value) {
   return binn_list_add(list, BINN_UINT8, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_uint16(binn *list, unsigned short value) {
+ALWAYS_INLINE BOOL binn_list_add_uint16(binn* list, unsigned short value) {
   return binn_list_add(list, BINN_UINT16, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_uint32(binn *list, unsigned int value) {
+ALWAYS_INLINE BOOL binn_list_add_uint32(binn* list, unsigned int value) {
   return binn_list_add(list, BINN_UINT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_uint64(binn *list, uint64 value) {
+ALWAYS_INLINE BOOL binn_list_add_uint64(binn* list, uint64_t value) {
   return binn_list_add(list, BINN_UINT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_float(binn *list, float value) {
+ALWAYS_INLINE BOOL binn_list_add_float(binn* list, float value) {
   return binn_list_add(list, BINN_FLOAT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_double(binn *list, double value) {
+ALWAYS_INLINE BOOL binn_list_add_double(binn* list, double value) {
   return binn_list_add(list, BINN_FLOAT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_bool(binn *list, BOOL value) {
+ALWAYS_INLINE BOOL binn_list_add_bool(binn* list, BOOL value) {
   return binn_list_add(list, BINN_BOOL, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_null(binn *list) {
+ALWAYS_INLINE BOOL binn_list_add_null(binn* list) {
   return binn_list_add(list, BINN_NULL, NULL, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_str(binn *list, char *str) {
+ALWAYS_INLINE BOOL binn_list_add_str(binn* list, const char const *str) {
   return binn_list_add(list, BINN_STRING, str, 0);
 }
-ALWAYS_INLINE BOOL binn_list_add_blob(binn *list, void *ptr, int size) {
+ALWAYS_INLINE BOOL binn_list_add_blob(binn* list, const void const *ptr, int size) {
   return binn_list_add(list, BINN_BLOB, ptr, size);
 }
-ALWAYS_INLINE BOOL binn_list_add_list(binn *list, void *list2) {
+ALWAYS_INLINE BOOL binn_list_add_list(binn* list, const void const *list2) {
   return binn_list_add(list, BINN_LIST, binn_ptr(list2), binn_size(list2));
 }
-ALWAYS_INLINE BOOL binn_list_add_map(binn *list, void *map) {
+ALWAYS_INLINE BOOL binn_list_add_map(binn* list, const void const *map) {
   return binn_list_add(list, BINN_MAP, binn_ptr(map), binn_size(map));
 }
-ALWAYS_INLINE BOOL binn_list_add_object(binn *list, void *obj) {
+ALWAYS_INLINE BOOL binn_list_add_object(binn* list, const void const *obj) {
   return binn_list_add(list, BINN_OBJECT, binn_ptr(obj), binn_size(obj));
 }
-ALWAYS_INLINE BOOL binn_list_add_value(binn *list, binn *value) {
+ALWAYS_INLINE BOOL binn_list_add_value(binn* list, const binn const *value) {
   return binn_list_add(list, value->type, binn_ptr(value), binn_size(value));
 }
 
 /*************************************************************************************/
 
-ALWAYS_INLINE BOOL binn_map_set_int8(binn *map, int id, signed char value) {
+ALWAYS_INLINE BOOL binn_map_set_int8(binn*map, int id, signed char value) {
   return binn_map_set(map, id, BINN_INT8, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_int16(binn *map, int id, short value) {
+ALWAYS_INLINE BOOL binn_map_set_int16(binn*map, int id, short value) {
   return binn_map_set(map, id, BINN_INT16, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_int32(binn *map, int id, int value) {
+ALWAYS_INLINE BOOL binn_map_set_int32(binn*map, int id, int value) {
   return binn_map_set(map, id, BINN_INT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_int64(binn *map, int id, int64 value) {
+ALWAYS_INLINE BOOL binn_map_set_int64(binn*map, int id, int64_t value) {
   return binn_map_set(map, id, BINN_INT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_uint8(binn *map, int id, unsigned char value) {
+ALWAYS_INLINE BOOL binn_map_set_uint8(binn*map, int id, unsigned char value) {
   return binn_map_set(map, id, BINN_UINT8, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_uint16(binn *map, int id, unsigned short value) {
+ALWAYS_INLINE BOOL binn_map_set_uint16(binn*map, int id, unsigned short value) {
   return binn_map_set(map, id, BINN_UINT16, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_uint32(binn *map, int id, unsigned int value) {
+ALWAYS_INLINE BOOL binn_map_set_uint32(binn*map, int id, unsigned int value) {
   return binn_map_set(map, id, BINN_UINT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_uint64(binn *map, int id, uint64 value) {
+ALWAYS_INLINE BOOL binn_map_set_uint64(binn*map, int id, uint64_t value) {
   return binn_map_set(map, id, BINN_UINT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_float(binn *map, int id, float value) {
+ALWAYS_INLINE BOOL binn_map_set_float(binn*map, int id, float value) {
   return binn_map_set(map, id, BINN_FLOAT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_double(binn *map, int id, double value) {
+ALWAYS_INLINE BOOL binn_map_set_double(binn*map, int id, double value) {
   return binn_map_set(map, id, BINN_FLOAT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_bool(binn *map, int id, BOOL value) {
+ALWAYS_INLINE BOOL binn_map_set_bool(binn*map, int id, BOOL value) {
   return binn_map_set(map, id, BINN_BOOL, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_null(binn *map, int id) {
+ALWAYS_INLINE BOOL binn_map_set_null(binn*map, int id) {
   return binn_map_set(map, id, BINN_NULL, NULL, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_str(binn *map, int id, char *str) {
+ALWAYS_INLINE BOOL binn_map_set_str(binn*map, int id, const char const *str) {
   return binn_map_set(map, id, BINN_STRING, str, 0);
 }
-ALWAYS_INLINE BOOL binn_map_set_blob(binn *map, int id, void *ptr, int size) {
+ALWAYS_INLINE BOOL binn_map_set_blob(binn*map, int id, const void const *ptr, int size) {
   return binn_map_set(map, id, BINN_BLOB, ptr, size);
 }
-ALWAYS_INLINE BOOL binn_map_set_list(binn *map, int id, void *list) {
+ALWAYS_INLINE BOOL binn_map_set_list(binn*map, int id, const void const *list) {
   return binn_map_set(map, id, BINN_LIST, binn_ptr(list), binn_size(list));
 }
-ALWAYS_INLINE BOOL binn_map_set_map(binn *map, int id, void *map2) {
+ALWAYS_INLINE BOOL binn_map_set_map(binn*map, int id, const void const *map2) {
   return binn_map_set(map, id, BINN_MAP, binn_ptr(map2), binn_size(map2));
 }
-ALWAYS_INLINE BOOL binn_map_set_object(binn *map, int id, void *obj) {
+ALWAYS_INLINE BOOL binn_map_set_object(binn*map, int id, const void const *obj) {
   return binn_map_set(map, id, BINN_OBJECT, binn_ptr(obj), binn_size(obj));
 }
-ALWAYS_INLINE BOOL binn_map_set_value(binn *map, int id, binn *value) {
+ALWAYS_INLINE BOOL binn_map_set_value(binn*map, int id, const binn const *value) {
   return binn_map_set(map, id, value->type, binn_ptr(value), binn_size(value));
 }
 
 /*************************************************************************************/
 
-ALWAYS_INLINE BOOL binn_object_set_int8(binn *obj, char *key, signed char value) {
+ALWAYS_INLINE BOOL binn_object_set_int8(binn* obj, const char const *key, signed char value) {
   return binn_object_set(obj, key, BINN_INT8, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_int16(binn *obj, char *key, short value) {
+ALWAYS_INLINE BOOL binn_object_set_int16(binn* obj, const char const *key, short value) {
   return binn_object_set(obj, key, BINN_INT16, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_int32(binn *obj, char *key, int value) {
+ALWAYS_INLINE BOOL binn_object_set_int32(binn* obj, const char const *key, int value) {
   return binn_object_set(obj, key, BINN_INT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_int64(binn *obj, char *key, int64 value) {
+ALWAYS_INLINE BOOL binn_object_set_int64(binn* obj, const char const *key, int64_t value) {
   return binn_object_set(obj, key, BINN_INT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_uint8(binn *obj, char *key, unsigned char value) {
+ALWAYS_INLINE BOOL binn_object_set_uint8(binn* obj, const char const *key, unsigned char value) {
   return binn_object_set(obj, key, BINN_UINT8, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_uint16(binn *obj, char *key, unsigned short value) {
+ALWAYS_INLINE BOOL binn_object_set_uint16(binn* obj, const char const *key, unsigned short value) {
   return binn_object_set(obj, key, BINN_UINT16, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_uint32(binn *obj, char *key, unsigned int value) {
+ALWAYS_INLINE BOOL binn_object_set_uint32(binn* obj, const char const *key, unsigned int value) {
   return binn_object_set(obj, key, BINN_UINT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_uint64(binn *obj, char *key, uint64 value) {
+ALWAYS_INLINE BOOL binn_object_set_uint64(binn* obj, const char const *key, uint64_t value) {
   return binn_object_set(obj, key, BINN_UINT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_float(binn *obj, char *key, float value) {
+ALWAYS_INLINE BOOL binn_object_set_float(binn* obj, const char const *key, float value) {
   return binn_object_set(obj, key, BINN_FLOAT32, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_double(binn *obj, char *key, double value) {
+ALWAYS_INLINE BOOL binn_object_set_double(binn* obj, const char const *key, double value) {
   return binn_object_set(obj, key, BINN_FLOAT64, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_bool(binn *obj, char *key, BOOL value) {
+ALWAYS_INLINE BOOL binn_object_set_bool(binn* obj, const char const *key, BOOL value) {
   return binn_object_set(obj, key, BINN_BOOL, &value, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_null(binn *obj, char *key) {
+ALWAYS_INLINE BOOL binn_object_set_null(binn* obj, const char const *key) {
   return binn_object_set(obj, key, BINN_NULL, NULL, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_str(binn *obj, char *key, char *str) {
+ALWAYS_INLINE BOOL binn_object_set_str(binn* obj, const char const *key, char *str) {
   return binn_object_set(obj, key, BINN_STRING, str, 0);
 }
-ALWAYS_INLINE BOOL binn_object_set_blob(binn *obj, char *key, void *ptr, int size) {
+ALWAYS_INLINE BOOL binn_object_set_blob(binn* obj, const char const *key, void *ptr, int size) {
   return binn_object_set(obj, key, BINN_BLOB, ptr, size);
 }
-ALWAYS_INLINE BOOL binn_object_set_list(binn *obj, char *key, void *list) {
+ALWAYS_INLINE BOOL binn_object_set_list(binn* obj, const char const *key, void *list) {
   return binn_object_set(obj, key, BINN_LIST, binn_ptr(list), binn_size(list));
 }
-ALWAYS_INLINE BOOL binn_object_set_map(binn *obj, char *key, void *map) {
+ALWAYS_INLINE BOOL binn_object_set_map(binn* obj, const char const *key, void *map) {
   return binn_object_set(obj, key, BINN_MAP, binn_ptr(map), binn_size(map));
 }
-ALWAYS_INLINE BOOL binn_object_set_object(binn *obj, char *key, void *obj2) {
+ALWAYS_INLINE BOOL binn_object_set_object(binn* obj, const char const *key, void *obj2) {
   return binn_object_set(obj, key, BINN_OBJECT, binn_ptr(obj2), binn_size(obj2));
 }
-ALWAYS_INLINE BOOL binn_object_set_value(binn *obj, char *key, binn *value) {
+ALWAYS_INLINE BOOL binn_object_set_value(binn* obj, const char const *key, binn* value) {
   return binn_object_set(obj, key, value->type, binn_ptr(value), binn_size(value));
 }
 
@@ -740,7 +675,7 @@ ALWAYS_INLINE BOOL binn_list_get_int16(void *list, int pos, short *pvalue) {
 ALWAYS_INLINE BOOL binn_list_get_int32(void *list, int pos, int *pvalue) {
   return binn_list_get(list, pos, BINN_INT32, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_list_get_int64(void *list, int pos, int64 *pvalue) {
+ALWAYS_INLINE BOOL binn_list_get_int64(void *list, int pos, int64_t *pvalue) {
   return binn_list_get(list, pos, BINN_INT64, pvalue, NULL);
 }
 ALWAYS_INLINE BOOL binn_list_get_uint8(void *list, int pos, unsigned char *pvalue) {
@@ -752,7 +687,7 @@ ALWAYS_INLINE BOOL binn_list_get_uint16(void *list, int pos, unsigned short *pva
 ALWAYS_INLINE BOOL binn_list_get_uint32(void *list, int pos, unsigned int *pvalue) {
   return binn_list_get(list, pos, BINN_UINT32, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_list_get_uint64(void *list, int pos, uint64 *pvalue) {
+ALWAYS_INLINE BOOL binn_list_get_uint64(void *list, int pos, uint64_t *pvalue) {
   return binn_list_get(list, pos, BINN_UINT64, pvalue, NULL);
 }
 ALWAYS_INLINE BOOL binn_list_get_float(void *list, int pos, float *pvalue) {
@@ -791,7 +726,7 @@ ALWAYS_INLINE BOOL binn_map_get_int16(void *map, int id, short *pvalue) {
 ALWAYS_INLINE BOOL binn_map_get_int32(void *map, int id, int *pvalue) {
   return binn_map_get(map, id, BINN_INT32, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_map_get_int64(void *map, int id, int64 *pvalue) {
+ALWAYS_INLINE BOOL binn_map_get_int64(void *map, int id, int64_t *pvalue) {
   return binn_map_get(map, id, BINN_INT64, pvalue, NULL);
 }
 ALWAYS_INLINE BOOL binn_map_get_uint8(void *map, int id, unsigned char *pvalue) {
@@ -803,7 +738,7 @@ ALWAYS_INLINE BOOL binn_map_get_uint16(void *map, int id, unsigned short *pvalue
 ALWAYS_INLINE BOOL binn_map_get_uint32(void *map, int id, unsigned int *pvalue) {
   return binn_map_get(map, id, BINN_UINT32, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_map_get_uint64(void *map, int id, uint64 *pvalue) {
+ALWAYS_INLINE BOOL binn_map_get_uint64(void *map, int id, uint64_t *pvalue) {
   return binn_map_get(map, id, BINN_UINT64, pvalue, NULL);
 }
 ALWAYS_INLINE BOOL binn_map_get_float(void *map, int id, float *pvalue) {
@@ -836,62 +771,62 @@ ALWAYS_INLINE BOOL binn_map_get_object(void *map, int id, void **pvalue) {
 // usage:
 //   if (binn_object_get_int32(obj, "multiplier", &multiplier) == FALSE) xxx;
 
-ALWAYS_INLINE BOOL binn_object_get_int8(void *obj, char *key, signed char *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_int8(void *obj, const char const *key, signed char *pvalue) {
   return binn_object_get(obj, key, BINN_INT8, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_int16(void *obj, char *key, short *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_int16(void *obj, const char const *key, short *pvalue) {
   return binn_object_get(obj, key, BINN_INT16, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_int32(void *obj, char *key, int *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_int32(void *obj, const char const *key, int *pvalue) {
   return binn_object_get(obj, key, BINN_INT32, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_int64(void *obj, char *key, int64 *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_int64(void *obj, const char const *key, int64_t *pvalue) {
   return binn_object_get(obj, key, BINN_INT64, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_uint8(void *obj, char *key, unsigned char *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_uint8(void *obj, const char const *key, unsigned char *pvalue) {
   return binn_object_get(obj, key, BINN_UINT8, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_uint16(void *obj, char *key, unsigned short *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_uint16(void *obj, const char const *key, unsigned short *pvalue) {
   return binn_object_get(obj, key, BINN_UINT16, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_uint32(void *obj, char *key, unsigned int *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_uint32(void *obj, const char const *key, unsigned int *pvalue) {
   return binn_object_get(obj, key, BINN_UINT32, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_uint64(void *obj, char *key, uint64 *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_uint64(void *obj, const char const *key, uint64_t *pvalue) {
   return binn_object_get(obj, key, BINN_UINT64, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_float(void *obj, char *key, float *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_float(void *obj, const char const *key, float *pvalue) {
   return binn_object_get(obj, key, BINN_FLOAT32, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_double(void *obj, char *key, double *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_double(void *obj, const char const *key, double *pvalue) {
   return binn_object_get(obj, key, BINN_FLOAT64, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_bool(void *obj, char *key, BOOL *pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_bool(void *obj, const char const *key, BOOL *pvalue) {
   return binn_object_get(obj, key, BINN_BOOL, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_str(void *obj, char *key, char **pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_str(void *obj, const char const *key, char **pvalue) {
   return binn_object_get(obj, key, BINN_STRING, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_blob(void *obj, char *key, void **pvalue, int *psize) {
+ALWAYS_INLINE BOOL binn_object_get_blob(void *obj, const char const *key, void **pvalue, int *psize) {
   return binn_object_get(obj, key, BINN_BLOB, pvalue, psize);
 }
-ALWAYS_INLINE BOOL binn_object_get_list(void *obj, char *key, void **pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_list(void *obj, const char const *key, void **pvalue) {
   return binn_object_get(obj, key, BINN_LIST, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_map(void *obj, char *key, void **pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_map(void *obj, const char const *key, void **pvalue) {
   return binn_object_get(obj, key, BINN_MAP, pvalue, NULL);
 }
-ALWAYS_INLINE BOOL binn_object_get_object(void *obj, char *key, void **pvalue) {
+ALWAYS_INLINE BOOL binn_object_get_object(void *obj, const char const *key, void **pvalue) {
   return binn_object_get(obj, key, BINN_OBJECT, pvalue, NULL);
 }
 
 /***************************************************************************/
 
-BOOL   APIENTRY binn_get_int32(binn *value, int *pint);
-BOOL   APIENTRY binn_get_int64(binn *value, int64 *pint);
-BOOL   APIENTRY binn_get_double(binn *value, double *pfloat);
-BOOL   APIENTRY binn_get_bool(binn *value, BOOL *pbool);
-char * APIENTRY binn_get_str(binn *value);
+extern BOOL   binn_get_int32(binn* value, int *pint);
+extern BOOL   binn_get_int64(binn* value, int64_t *pint);
+extern BOOL   binn_get_double(binn* value, double *pfloat);
+extern BOOL   binn_get_bool(binn* value, BOOL *pbool);
+extern char* binn_get_str(binn* value);
 
 // boolean string values:
 // 1, true, yes, on
@@ -900,6 +835,9 @@ char * APIENTRY binn_get_str(binn *value);
 // boolean number values:
 // !=0 [true]
 // ==0 [false]
+
+
+
 
 
 #ifdef __cplusplus

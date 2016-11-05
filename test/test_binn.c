@@ -4,62 +4,63 @@
 #include <string.h>
 #include <math.h>  /* for fabs */
 #include <assert.h>
+
 #include "test_binn.h"
 
 
 /*************************************************************************************/
 
-void test_endianess() {
-  short vshort1, vshort2;
-  int   vint1, vint2;
-  int64 value1, value2;
+static void test_endianess() {
+  uint16_t i16_1, i16_2;
+  uint32_t   i32_1, i32_2;
+  uint64_t i64_1, i64_2;
 
   printf("testing endianess... ");
 
   /* htons */
-  vshort1 = 0x1122;
-  vshort2 = htons(vshort1);
-  assert(vshort2 == 0x2211);
-  vshort2 = htons(vshort2);
-  assert(vshort2 == vshort1);
+  i16_1 = 0x1122;
+  i16_2 = htons(i16_1);
+  assert(i16_2 == 0x2211);
+  i16_2 = htons(i16_2);
+  assert(i16_2 == i16_1);
 
-  vshort1 = 0xF123;
-  vshort2 = htons(vshort1);
-  assert(vshort2 == 0x23F1);
-  vshort2 = htons(vshort2);
-  assert(vshort2 == vshort1);
+  i16_1 = 0xF123;
+  i16_2 = htons(i16_1);
+  assert(i16_2 == 0x23F1);
+  i16_2 = htons(i16_2);
+  assert(i16_2 == i16_1);
 
-  vshort1 = 0x0123;
-  vshort2 = htons(vshort1);
-  assert(vshort2 == 0x2301);
-  vshort2 = htons(vshort2);
-  assert(vshort2 == vshort1);
+  i16_1 = 0x0123;
+  i16_2 = htons(i16_1);
+  assert(i16_2 == 0x2301);
+  i16_2 = htons(i16_2);
+  assert(i16_2 == i16_1);
 
   /* htonl */
-  vint1 = 0x11223344;
-  vint2 = htonl(vint1);
-  assert(vint2 == 0x44332211);
-  vint2 = htonl(vint2);
-  assert(vint2 == vint1);
+  i32_1 = 0x11223344;
+  i32_2 = htonl(i32_1);
+  assert(i32_2 == 0x44332211);
+  i32_2 = htonl(i32_2);
+  assert(i32_2 == i32_1);
 
-  vint1 = 0xF1234580;
-  vint2 = htonl(vint1);
-  assert(vint2 == 0x804523F1);
-  vint2 = htonl(vint2);
-  assert(vint2 == vint1);
+  i32_1 = 0xF1234580;
+  i32_2 = htonl(i32_1);
+  assert(i32_2 == 0x804523F1);
+  i32_2 = htonl(i32_2);
+  assert(i32_2 == i32_1);
 
-  vint1 = 0x00112233;
-  vint2 = htonl(vint1);
-  assert(vint2 == 0x33221100);
-  vint2 = htonl(vint2);
-  assert(vint2 == vint1);
+  i32_1 = 0x00112233;
+  i32_2 = htonl(i32_1);
+  assert(i32_2 == 0x33221100);
+  i32_2 = htonl(i32_2);
+  assert(i32_2 == i32_1);
 
   /* htonll */
-  value1 = 0x1122334455667788;
-  value2 = htonll(value1);
-  assert(value2 == 0x8877665544332211);
-  value2 = htonll(value2);
-  assert(value2 == value1);
+  i64_1 = 0x1122334455667788;
+  i64_2 = htonll(i64_1);
+  assert(i64_2 == 0x8877665544332211);
+  i64_2 = htonll(i64_2);
+  assert(i64_2 == i64_1);
 
   printf("OK\n");
 
@@ -80,16 +81,16 @@ void * memdup(void *src, int size) {
 
 /***************************************************************************/
 
-char * i64toa(int64 value, char *buf, int radix) {
+char * i64toa(int64_t value, char *buf, int radix) {
 #ifdef _MSC_VER
   return _i64toa(value, buf, radix);
 #else
   switch (radix) {
   case 10:
-    snprintf(buf, 64, "%" INT64_FORMAT, value);
+    snprintf(buf, 64, "%" INT64_FORMAT, (long long int)value);
     break;
   case 16:
-    snprintf(buf, 64, "%" INT64_HEX_FORMAT, value);
+    snprintf(buf, 64, "%" INT64_HEX_FORMAT, (long long unsigned int)value);
     break;
   default:
     buf[0] = 0;
@@ -100,20 +101,20 @@ char * i64toa(int64 value, char *buf, int radix) {
 
 /*************************************************************************************/
 
-void pass_int64(int64 a) {
+static void pass_int64(int64_t a) {
 
   assert(a == 9223372036854775807);
   assert(a > 9223372036854775806);
 
 }
 
-int64 return_int64() {
+static int64_t return_int64() {
 
   return 9223372036854775807;
 
 }
 
-int64 return_passed_int64(int64 a) {
+static int64_t return_passed_int64(int64_t a) {
 
   return a;
 
@@ -121,9 +122,9 @@ int64 return_passed_int64(int64 a) {
 
 /*************************************************************************************/
 
-void test_int64() {
-  int64 i64;
-  //uint64 b;
+static void test_int64() {
+  int64_t i64;
+  //uint64_t b;
   //long long int b;  -- did not work!
   char buf[64];
 
@@ -191,7 +192,7 @@ BOOL AlmostEqualFloats(float A, float B, int maxUlps) {
 #define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
 
-BOOL AlmostEqualDoubles(double a, double b) {
+static BOOL AlmostEqualDoubles(double a, double b) {
     double absDiff, maxAbs, absA, absB;
 
     absDiff = fabs(a - b);
@@ -208,7 +209,7 @@ BOOL AlmostEqualDoubles(double a, double b) {
 
 /*************************************************************************************/
 
-void test_floating_point_numbers() {
+static void test_floating_point_numbers() {
   char  buf[256];
   float f1;
   double d1;
@@ -216,16 +217,16 @@ void test_floating_point_numbers() {
   printf("testing floating point... ");
 
   f1 = 1.25;
-  assert(f1 == 1.25);
+  assert(FLOAT_COMP(f1,1.25));
   d1 = 1.25;
-  assert(d1 == 1.25);
+  assert(FLOAT_COMP(d1,1.25));
 
   d1 = 0;
   d1 = f1;
-  assert(d1 == 1.25);
+  assert(FLOAT_COMP(d1,1.25));
   f1 = 0;
   f1 = d1;
-  assert(f1 == 1.25);
+  assert(FLOAT_COMP(f1,1.25));
 
   d1 = 1.234;
   assert(AlmostEqualDoubles(d1, 1.234) == TRUE);
@@ -257,7 +258,7 @@ void test_floating_point_numbers() {
 
 
   d1 = atof("12.34");
-  assert(d1 == 12.34);
+  assert(FLOAT_COMP(d1,12.34));
   f1 = d1;
   assert(AlmostEqualFloats(f1, 12.34, 2) == TRUE);
 
@@ -289,7 +290,7 @@ void test_floating_point_numbers() {
 
 /*************************************************************************************/
 
-void test1() {
+static void test1(void) {
   static const int fix_size = 512;
   int i, blobsize;
   char *ptr, *p2;
@@ -297,11 +298,11 @@ void test1() {
   binn value;
   // test values
   char vbyte, *pblob;
-  signed short vint16;
+  signed short i32_16;
   unsigned short vuint16;
-  signed int vint32;
+  signed int i32_32;
   unsigned int vuint32;
-  signed long long int vint64;
+  signed long long int i32_64;
   unsigned long long int vuint64;
 
   printf("testing binn 1... ");
@@ -489,11 +490,11 @@ void test1() {
   assert(binn_object_set(obj, "test", BINN_INT32, &i, 0) == FALSE); // with the same name
 
   vbyte = 255;
-  vint16 = -32000;
+  i32_16 = -32000;
   vuint16 = 65000;
-  vint32 = -65000000;
+  i32_32 = -65000000;
   vuint32 = 65000000;
-  vint64 = -6500000000000000;
+  i32_64 = -6500000000000000;
   vuint64 = 6500000000000000;
   blobsize = 150;
   pblob = malloc(blobsize);
@@ -502,33 +503,33 @@ void test1() {
 
   assert(binn_list_add(list, BINN_NULL, 0, 0) == TRUE);           // second
   assert(binn_list_add(list, BINN_UINT8, &vbyte, 0) == TRUE);     // third
-  assert(binn_list_add(list, BINN_INT16, &vint16, 0) == TRUE);    // fourth
+  assert(binn_list_add(list, BINN_INT16, &i32_16, 0) == TRUE);    // fourth
   assert(binn_list_add(list, BINN_UINT16, &vuint16, 0) == TRUE);  // fifth
-  assert(binn_list_add(list, BINN_INT32, &vint32, 0) == TRUE);    // 6th
+  assert(binn_list_add(list, BINN_INT32, &i32_32, 0) == TRUE);    // 6th
   assert(binn_list_add(list, BINN_UINT32, &vuint32, 0) == TRUE);  // 7th
-  assert(binn_list_add(list, BINN_INT64, &vint64, 0) == TRUE);    // 8th
+  assert(binn_list_add(list, BINN_INT64, &i32_64, 0) == TRUE);    // 8th
   assert(binn_list_add(list, BINN_UINT64, &vuint64, 0) == TRUE);  // 9th
   assert(binn_list_add(list, BINN_STRING, "this is the string", 0) == TRUE); // 10th
   assert(binn_list_add(list, BINN_BLOB, pblob, blobsize) == TRUE);           // 11th
 
   assert(binn_map_set(map, 99000, BINN_NULL, 0, 0) == TRUE);           // third
   assert(binn_map_set(map, 99001, BINN_UINT8, &vbyte, 0) == TRUE);     // fourth
-  assert(binn_map_set(map, 99002, BINN_INT16, &vint16, 0) == TRUE);    // fifth
+  assert(binn_map_set(map, 99002, BINN_INT16, &i32_16, 0) == TRUE);    // fifth
   assert(binn_map_set(map, 99003, BINN_UINT16, &vuint16, 0) == TRUE);  // 6th
-  assert(binn_map_set(map, 99004, BINN_INT32, &vint32, 0) == TRUE);    // 7th
+  assert(binn_map_set(map, 99004, BINN_INT32, &i32_32, 0) == TRUE);    // 7th
   assert(binn_map_set(map, 99005, BINN_UINT32, &vuint32, 0) == TRUE);  // 8th
-  assert(binn_map_set(map, 99006, BINN_INT64, &vint64, 0) == TRUE);    // 9th
+  assert(binn_map_set(map, 99006, BINN_INT64, &i32_64, 0) == TRUE);    // 9th
   assert(binn_map_set(map, 99007, BINN_UINT64, &vuint64, 0) == TRUE);  // 10th
   assert(binn_map_set(map, 99008, BINN_STRING, "this is the string", 0) == TRUE); // 11th
   assert(binn_map_set(map, 99009, BINN_BLOB, pblob, blobsize) == TRUE);           // 12th
 
   assert(binn_object_set(obj, "key0", BINN_NULL, 0, 0) == TRUE);           // third
   assert(binn_object_set(obj, "key1", BINN_UINT8, &vbyte, 0) == TRUE);     // fourth
-  assert(binn_object_set(obj, "key2", BINN_INT16, &vint16, 0) == TRUE);    // fifth
+  assert(binn_object_set(obj, "key2", BINN_INT16, &i32_16, 0) == TRUE);    // fifth
   assert(binn_object_set(obj, "key3", BINN_UINT16, &vuint16, 0) == TRUE);  // 6th
-  assert(binn_object_set(obj, "key4", BINN_INT32, &vint32, 0) == TRUE);    // 7th
+  assert(binn_object_set(obj, "key4", BINN_INT32, &i32_32, 0) == TRUE);    // 7th
   assert(binn_object_set(obj, "key5", BINN_UINT32, &vuint32, 0) == TRUE);  // 8th
-  assert(binn_object_set(obj, "key6", BINN_INT64, &vint64, 0) == TRUE);    // 9th
+  assert(binn_object_set(obj, "key6", BINN_INT64, &i32_64, 0) == TRUE);    // 9th
   assert(binn_object_set(obj, "key7", BINN_UINT64, &vuint64, 0) == TRUE);  // 10th
   assert(binn_object_set(obj, "key8", BINN_STRING, "this is the string", 0) == TRUE); // 11th
   assert(binn_object_set(obj, "key9", BINN_BLOB, pblob, blobsize) == TRUE);           // 12th
@@ -559,7 +560,7 @@ void test1() {
     *p2 = 'A'; p2++;
   }
   *p2 = '\0';
-  assert(strlen(ptr) == fix_size - 1);
+  assert(strlen(ptr) == (size_t)(fix_size - 1));
 
   assert(binn_object_set(obj1, "v2", BINN_STRING, ptr, 0) == FALSE); // it fails because it uses a pre-allocated memory block
 
@@ -607,18 +608,18 @@ void test1() {
 
 /*************************************************************************************/
 
-void test2(BOOL use_int_compression) {
+static void test2(BOOL use_int_compression) {
   binn *list=INVALID_BINN, *map=INVALID_BINN, *obj=INVALID_BINN;
   binn value;
   BOOL vbool;
   int blobsize;
   char *pblob, *pstr;
-  signed int vint32;
+  signed int i32_32;
   double vdouble;
 
-  char *str_list = "test list";
-  char *str_map = "test map";
-  char *str_obj = "test object";
+  const char *str_list = "test list";
+  const char *str_map = "test map";
+  const char *str_obj = "test object";
 
   printf("testing binn 2 (use_int_compression = %d)... ", use_int_compression);
 
@@ -706,7 +707,7 @@ void test2(BOOL use_int_compression) {
 
   assert(binn_list_add_str(list, str_list) == TRUE);
   assert(binn_map_set_str(map, 1004, str_map) == TRUE);
-  assert(binn_object_set_str(obj, "text", str_obj) == TRUE);
+  assert(binn_object_set_str(obj, "text", (char*)str_obj) == TRUE);
 
   assert(list->count == 4);
   assert(map->count == 4);
@@ -800,7 +801,7 @@ void test2(BOOL use_int_compression) {
   assert(value.ptr == &value.vint);
   assert(value.size == 0);
   assert(value.count == 0);
-  assert(value.vdouble == 1.23);
+  assert(FLOAT_COMP(value.vdouble,1.23));
 
   memset(&value, 0, sizeof(binn));
 
@@ -812,7 +813,7 @@ void test2(BOOL use_int_compression) {
   assert(value.ptr == &value.vint);
   assert(value.size == 0);
   assert(value.count == 0);
-  assert(value.vdouble == 4.56);
+  assert(FLOAT_COMP(value.vdouble,4.56));
 
   memset(&value, 0, sizeof(binn));
 
@@ -824,7 +825,7 @@ void test2(BOOL use_int_compression) {
   assert(value.ptr == &value.vint);
   assert(value.size == 0);
   assert(value.count == 0);
-  assert(value.vdouble == 7.89);
+  assert(FLOAT_COMP(value.vdouble,7.89));
 
   memset(&value, 0, sizeof(binn));
 
@@ -874,7 +875,7 @@ void test2(BOOL use_int_compression) {
   assert(value.writable == FALSE);
   assert(value.type == BINN_STRING);
   assert(value.ptr != 0);
-  assert(value.size == strlen(str_list));
+  assert((size_t)value.size == strlen(str_list));
   assert(strcmp(value.ptr, str_list) == 0);
   assert(value.count == 0);
 
@@ -885,7 +886,7 @@ void test2(BOOL use_int_compression) {
   assert(value.header == BINN_MAGIC);
   assert(value.writable == FALSE);
   assert(value.type == BINN_STRING);
-  assert(value.size == strlen(str_map));
+  assert((size_t)value.size == strlen(str_map));
   assert(strcmp(value.ptr, str_map) == 0);
   assert(value.count == 0);
 
@@ -896,7 +897,7 @@ void test2(BOOL use_int_compression) {
   assert(value.header == BINN_MAGIC);
   assert(value.writable == FALSE);
   assert(value.type == BINN_STRING);
-  assert(value.size == strlen(str_obj));
+  assert((size_t)value.size == strlen(str_obj));
   assert(strcmp(value.ptr, str_obj) == 0);
   assert(value.count == 0);
 
@@ -945,25 +946,25 @@ void test2(BOOL use_int_compression) {
 
   // read with other interface
 
-  assert(binn_list_get_int32(list, 1, &vint32) == TRUE);
-  assert(vint32 == 123);
+  assert(binn_list_get_int32(list, 1, &i32_32) == TRUE);
+  assert(i32_32 == 123);
 
-  assert(binn_map_get_int32(map, 1001, &vint32) == TRUE);
-  assert(vint32 == 456);
+  assert(binn_map_get_int32(map, 1001, &i32_32) == TRUE);
+  assert(i32_32 == 456);
 
-  assert(binn_object_get_int32(obj, "int", &vint32) == TRUE);
-  assert(vint32 == 789);
+  assert(binn_object_get_int32(obj, "int", &i32_32) == TRUE);
+  assert(i32_32 == 789);
 
   // double
 
   assert(binn_list_get_double(list, 2, &vdouble) == TRUE);
-  assert(vdouble == 1.23);
+  assert(FLOAT_COMP(vdouble,1.23));
 
   assert(binn_map_get_double(map, 1002, &vdouble) == TRUE);
-  assert(vdouble == 4.56);
+  assert(FLOAT_COMP(vdouble,4.56));
 
   assert(binn_object_get_double(obj, "double", &vdouble) == TRUE);
-  assert(vdouble == 7.89);
+  assert(FLOAT_COMP(vdouble,7.89));
 
   // bool
 
@@ -1023,9 +1024,9 @@ void test2(BOOL use_int_compression) {
 
   // double
 
-  assert(binn_list_double(list, 2) == 1.23);
-  assert(binn_map_double(map, 1002) == 4.56);
-  assert(binn_object_double(obj, "double") == 7.89);
+  assert(FLOAT_COMP(binn_list_double(list, 2),1.23));
+  assert(FLOAT_COMP(binn_map_double(map, 1002),4.56));
+  assert(FLOAT_COMP(binn_object_double(obj, "double"),7.89));
 
   // bool
 
@@ -1075,7 +1076,7 @@ void test2(BOOL use_int_compression) {
 
 /*************************************************************************************/
 
-void test3() {
+static void test3() {
   static const int fix_size = 512;
   int i, id, type, count, size, header_size, blobsize;
   char *ptr, *p2, *pstr, key[256];
@@ -1083,11 +1084,11 @@ void test3() {
   binn value;
   // test values
   char vbyte, *pblob;
-  signed short vint16, *pint16;
+  signed short i32_16, *pint16;
   unsigned short vuint16, *puint16;
-  signed int vint32, *pint32;
+  signed int i32_32, *pint32;
   unsigned int vuint32, *puint32;
-  signed long long int vint64, *pint64;
+  signed long long int i32_64, *pint64;
   unsigned long long int vuint64, *puint64;
 
   printf("testing binn 3... ");
@@ -1178,11 +1179,11 @@ void test3() {
   assert(binn_object_set(obj, "test", BINN_INT32, &i, 0) == FALSE); // with the same name
 
   vbyte = 255;
-  vint16 = -32000;
+  i32_16 = -32000;
   vuint16 = 65000;
-  vint32 = -65000000;
+  i32_32 = -65000000;
   vuint32 = 65000000;
-  vint64 = -6500000000000000;
+  i32_64 = -6500000000000000;
   vuint64 = 6500000000000000;
   blobsize = 150;
   pblob = malloc(blobsize);
@@ -1191,33 +1192,33 @@ void test3() {
 
   assert(binn_list_add(list, BINN_NULL, 0, 0) == TRUE);           // second
   assert(binn_list_add(list, BINN_UINT8, &vbyte, 0) == TRUE);     // third
-  assert(binn_list_add(list, BINN_INT16, &vint16, 0) == TRUE);    // fourth
+  assert(binn_list_add(list, BINN_INT16, &i32_16, 0) == TRUE);    // fourth
   assert(binn_list_add(list, BINN_UINT16, &vuint16, 0) == TRUE);  // fifth
-  assert(binn_list_add(list, BINN_INT32, &vint32, 0) == TRUE);    // 6th
+  assert(binn_list_add(list, BINN_INT32, &i32_32, 0) == TRUE);    // 6th
   assert(binn_list_add(list, BINN_UINT32, &vuint32, 0) == TRUE);  // 7th
-  assert(binn_list_add(list, BINN_INT64, &vint64, 0) == TRUE);    // 8th
+  assert(binn_list_add(list, BINN_INT64, &i32_64, 0) == TRUE);    // 8th
   assert(binn_list_add(list, BINN_UINT64, &vuint64, 0) == TRUE);  // 9th
   assert(binn_list_add(list, BINN_STRING, "this is the string", 0) == TRUE); // 10th
   assert(binn_list_add(list, BINN_BLOB, pblob, blobsize) == TRUE);           // 11th
 
   assert(binn_map_set(map, 99000, BINN_NULL, 0, 0) == TRUE);           // third
   assert(binn_map_set(map, 99001, BINN_UINT8, &vbyte, 0) == TRUE);     // fourth
-  assert(binn_map_set(map, 99002, BINN_INT16, &vint16, 0) == TRUE);    // fifth
+  assert(binn_map_set(map, 99002, BINN_INT16, &i32_16, 0) == TRUE);    // fifth
   assert(binn_map_set(map, 99003, BINN_UINT16, &vuint16, 0) == TRUE);  // 6th
-  assert(binn_map_set(map, 99004, BINN_INT32, &vint32, 0) == TRUE);    // 7th
+  assert(binn_map_set(map, 99004, BINN_INT32, &i32_32, 0) == TRUE);    // 7th
   assert(binn_map_set(map, 99005, BINN_UINT32, &vuint32, 0) == TRUE);  // 8th
-  assert(binn_map_set(map, 99006, BINN_INT64, &vint64, 0) == TRUE);    // 9th
+  assert(binn_map_set(map, 99006, BINN_INT64, &i32_64, 0) == TRUE);    // 9th
   assert(binn_map_set(map, 99007, BINN_UINT64, &vuint64, 0) == TRUE);  // 10th
   assert(binn_map_set(map, 99008, BINN_STRING, "this is the string", 0) == TRUE); // 11th
   assert(binn_map_set(map, 99009, BINN_BLOB, pblob, blobsize) == TRUE);           // 12th
 
   assert(binn_object_set(obj, "key0", BINN_NULL, 0, 0) == TRUE);           // third
   assert(binn_object_set(obj, "key1", BINN_UINT8, &vbyte, 0) == TRUE);     // fourth
-  assert(binn_object_set(obj, "key2", BINN_INT16, &vint16, 0) == TRUE);    // fifth
+  assert(binn_object_set(obj, "key2", BINN_INT16, &i32_16, 0) == TRUE);    // fifth
   assert(binn_object_set(obj, "key3", BINN_UINT16, &vuint16, 0) == TRUE);  // 6th
-  assert(binn_object_set(obj, "key4", BINN_INT32, &vint32, 0) == TRUE);    // 7th
+  assert(binn_object_set(obj, "key4", BINN_INT32, &i32_32, 0) == TRUE);    // 7th
   assert(binn_object_set(obj, "key5", BINN_UINT32, &vuint32, 0) == TRUE);  // 8th
-  assert(binn_object_set(obj, "key6", BINN_INT64, &vint64, 0) == TRUE);    // 9th
+  assert(binn_object_set(obj, "key6", BINN_INT64, &i32_64, 0) == TRUE);    // 9th
   assert(binn_object_set(obj, "key7", BINN_UINT64, &vuint64, 0) == TRUE);  // 10th
   assert(binn_object_set(obj, "key8", BINN_STRING, "this is the string", 0) == TRUE); // 11th
   assert(binn_object_set(obj, "key9", BINN_BLOB, pblob, blobsize) == TRUE);           // 12th
@@ -1248,7 +1249,7 @@ void test3() {
     *p2 = 'A'; p2++;
   }
   *p2 = '\0';
-  assert(strlen(ptr) == fix_size - 1);
+  assert(strlen(ptr) == (size_t)(fix_size - 1));
 
   assert(binn_object_set(obj1, "v2", BINN_STRING, ptr, 0) == FALSE); // it fails because it uses a pre-allocated memory block
 
@@ -1331,7 +1332,7 @@ void test3() {
   assert(pint32 != NULL);
   assert(type == BINN_UINT32);
   //assert(size > 0);
-  assert(*pint32 == vuint32);
+  assert(*pint32 == (int32_t)vuint32);
 
 
 
@@ -1355,7 +1356,7 @@ void test3() {
   pint16 = binn_list_read(ptr, 4, &type, &size);
   assert(pint16 != NULL);
   assert(type == BINN_INT16);
-  assert(*pint16 == vint16);
+  assert(*pint16 == i32_16);
 
   type = 0; size = 0;
   puint16 = binn_list_read(ptr, 5, &type, &size);
@@ -1367,13 +1368,13 @@ void test3() {
   pint32 = binn_list_read(ptr, 6, &type, &size);
   assert(pint32 != NULL);
   assert(type == BINN_INT32);
-  assert(*pint32 == vint32);
+  assert(*pint32 == i32_32);
   // in the second time the value must be the same...
   type = 0; size = 0;
   pint32 = binn_list_read(ptr, 6, &type, &size);
   assert(pint32 != NULL);
   assert(type == BINN_INT32);
-  assert(*pint32 == vint32);
+  assert(*pint32 == i32_32);
 
   type = 0; size = 0;
   puint32 = binn_list_read(ptr, 7, &type, &size);
@@ -1385,13 +1386,13 @@ void test3() {
   pint64 = binn_list_read(ptr, 8, &type, &size);
   assert(pint64 != NULL);
   assert(type == BINN_INT64);
-  assert(*pint64 == vint64);
+  assert(*pint64 == i32_64);
   // in the second time the value must be the same...
   type = 0; size = 0;
   pint64 = binn_list_read(ptr, 8, &type, &size);
   assert(pint64 != NULL);
   assert(type == BINN_INT64);
-  assert(*pint64 == vint64);
+  assert(*pint64 == i32_64);
 
   type = 0; size = 0;
   puint64 = binn_list_read(ptr, 9, &type, &size);
@@ -1436,7 +1437,7 @@ void test3() {
   pint16 = binn_map_read(ptr, 99002, &type, &size);
   assert(pint16 != NULL);
   assert(type == BINN_INT16);
-  assert(*pint16 == vint16);
+  assert(*pint16 == i32_16);
 
   type = 0; size = 0;
   puint16 = binn_map_read(ptr, 99003, &type, &size);
@@ -1448,13 +1449,13 @@ void test3() {
   pint32 = binn_map_read(ptr, 99004, &type, &size);
   assert(pint32 != NULL);
   assert(type == BINN_INT32);
-  assert(*pint32 == vint32);
+  assert(*pint32 == i32_32);
   // in the second time the value must be the same...
   type = 0; size = 0;
   pint32 = binn_map_read(ptr, 99004, &type, &size);
   assert(pint32 != NULL);
   assert(type == BINN_INT32);
-  assert(*pint32 == vint32);
+  assert(*pint32 == i32_32);
 
   type = 0; size = 0;
   puint32 = binn_map_read(ptr, 99005, &type, &size);
@@ -1466,13 +1467,13 @@ void test3() {
   pint64 = binn_map_read(ptr, 99006, &type, &size);
   assert(pint64 != NULL);
   assert(type == BINN_INT64);
-  assert(*pint64 == vint64);
+  assert(*pint64 == i32_64);
   // in the second time the value must be the same...
   type = 0; size = 0;
   pint64 = binn_map_read(ptr, 99006, &type, &size);
   assert(pint64 != NULL);
   assert(type == BINN_INT64);
-  assert(*pint64 == vint64);
+  assert(*pint64 == i32_64);
 
   type = 0; size = 0;
   puint64 = binn_map_read(ptr, 99007, &type, &size);
@@ -1517,7 +1518,7 @@ void test3() {
   pint16 = binn_object_read(ptr, "key2", &type, &size);
   assert(pint16 != NULL);
   assert(type == BINN_INT16);
-  assert(*pint16 == vint16);
+  assert(*pint16 == i32_16);
 
   type = 0; size = 0;
   puint16 = binn_object_read(ptr, "key3", &type, &size);
@@ -1529,13 +1530,13 @@ void test3() {
   pint32 = binn_object_read(ptr, "key4", &type, &size);
   assert(pint32 != NULL);
   assert(type == BINN_INT32);
-  assert(*pint32 == vint32);
+  assert(*pint32 == i32_32);
   // in the second time the value must be the same...
   type = 0; size = 0;
   pint32 = binn_object_read(ptr, "key4", &type, &size);
   assert(pint32 != NULL);
   assert(type == BINN_INT32);
-  assert(*pint32 == vint32);
+  assert(*pint32 == i32_32);
 
   type = 0; size = 0;
   puint32 = binn_object_read(ptr, "key5", &type, &size);
@@ -1547,13 +1548,13 @@ void test3() {
   pint64 = binn_object_read(ptr, "key6", &type, &size);
   assert(pint64 != NULL);
   assert(type == BINN_INT64);
-  assert(*pint64 == vint64);
+  assert(*pint64 == i32_64);
   // in the second time the value must be the same...
   type = 0; size = 0;
   pint64 = binn_object_read(ptr, "key6", &type, &size);
   assert(pint64 != NULL);
   assert(type == BINN_INT64);
-  assert(*pint64 == vint64);
+  assert(*pint64 == i32_64);
 
   type = 0; size = 0;
   puint64 = binn_object_read(ptr, "key7", &type, &size);
@@ -1580,7 +1581,7 @@ void test3() {
   assert(p2 != NULL);
   assert(type == BINN_STRING);
   assert(size == fix_size - 1);
-  assert(strlen(p2) == fix_size - 1);
+  assert(strlen(p2) == (size_t)(fix_size - 1));
   assert(p2[0] == 'A');
   assert(p2[1] == 'A');
   assert(p2[500] == 'A');

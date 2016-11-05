@@ -11,7 +11,7 @@
 
 /*************************************************************************************/
 
-binn * APIENTRY json_obj_to_binn(json_t *base) {
+binn* json_obj_to_binn(json_t *base) {
   size_t  i, count;
   json_t  *value;
   const char  *key;
@@ -177,7 +177,7 @@ loc_integer:
 
 /*************************************************************************************/
 
-json_t * APIENTRY binn_to_json_obj(void *base) {
+json_t * binn_to_json_obj(void *base) {
   binn item;
 
   if (binn_is_struct(base))
@@ -190,7 +190,7 @@ json_t * APIENTRY binn_to_json_obj(void *base) {
 
 /*************************************************************************************/
 
-binn * APIENTRY json_to_binn(char *json_str) {
+binn* json_to_binn(char *json_str) {
   json_t *base;
   //json_error_t error;
   binn *item;
@@ -206,7 +206,7 @@ binn * APIENTRY json_to_binn(char *json_str) {
 
 /*************************************************************************************/
 
-char * APIENTRY binn_to_json(void *base) {
+char * binn_to_json(void *base) {
   json_t *json; char *ptr;
 
   json = binn_to_json_obj(base);
@@ -220,7 +220,7 @@ char * APIENTRY binn_to_json(void *base) {
 
 #ifdef JSON_JAVASCRIPT
 
-char * APIENTRY binn_to_javascript(void *base) {
+char * binn_to_javascript(void *base) {
   json_t *json; char *ptr;
 
   json = binn_to_json_obj(base);
