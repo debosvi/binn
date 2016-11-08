@@ -23,7 +23,12 @@ add_definitions(-Wstrict-aliasing -Wreturn-type -Wmissing-noreturn)
 
 # set (CMAKE_VERBOSE_MAKEFILE ON)
 
-include_directories(include)
+include_directories($ENV{HOME}/usr/include BEFORE)
+link_directories($ENV{HOME}/usr/lib/skalibs)
+
+include_directories(${CMAKE_BINARY_DIR}/include)
+
+add_subdirectory(include)
 
 add_subdirectory(src)
 add_subdirectory(test)
