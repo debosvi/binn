@@ -80,10 +80,12 @@ extern int binn_is_valid(binn_internal_t *item, binn_type_t *ptype, unsigned int
 extern binn_internal_t* binn_get_internal(binn_t node);
 extern binn_t binn_search_for_key(binn_t node, const char const *key);
 extern int binn_add_value(binn_t node, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size);
+extern int binn_get_value(binn_t node, const char const *key, const binn_type_t type, void **pvalue, unsigned int *psize);
 
 extern binn_t binn_new(const binn_type_t type, const void const *ptr, const unsigned int size);
 extern int binn_create(binn_t item, const binn_type_t type, const void const *ptr, const unsigned int size);
 
 extern int binn_object_set(binn_t obj, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size);
+extern int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, void *pvalue, unsigned int *psize);
 
 #endif // PRIVATE_BINN_H
