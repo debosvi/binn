@@ -113,22 +113,22 @@ extern int binn_list_get_blob(binn_t list, const int pos, void const const **ptr
 extern int binn_list_get_string(binn_t list, const int pos, char const **str);
 
 // get from map
-extern int binn_map_get_list(binn_t map, const int id, binn_t const *plist);
-extern int binn_map_get_map(binn_t map, const int id, binn_t const *pmap);
-extern int binn_map_get_object(binn_t map, const int id, binn_t const *pobject);
-extern int binn_map_get_int8(binn_t map, const int id, const int8_t const *pvalue);
-extern int binn_map_get_int16(binn_t map, const int id, const int16_t const *pvalue);
-extern int binn_map_get_int32(binn_t map, const int id, const int32_t const *pvalue);
-extern int binn_map_get_int64(binn_t map, const int id, const int64_t const *pvalue);
-extern int binn_map_get_uint8(binn_t map, const int id, const uint8_t const *pvalue);
-extern int binn_map_get_uint16(binn_t map, const int id, const uint16_t const *pvalue);
-extern int binn_map_get_uint32(binn_t map, const int id, const uint32_t const *pvalue);
-extern int binn_map_get_uint64(binn_t map, const int id, const uint64_t const *pvalue);
-extern int binn_map_get_float(binn_t map, const int id, const float const *pvalue);
-extern int binn_map_get_double(binn_t map, const int id, const double const *pvalue);
-extern int binn_map_get_bool(binn_t map, const int id, const char const *pvalue);
-extern int binn_map_get_blob(binn_t map, const int id, const void const **ptr, const size_t size);
-extern int binn_map_get_string(binn_t map, const int id, const char const *str);
+extern int binn_map_get_list(binn_t map, const int id, binn_t *plist);
+extern int binn_map_get_map(binn_t map, const int id, binn_t *pmap);
+extern int binn_map_get_object(binn_t map, const int id, binn_t *pobject);
+extern int binn_map_get_int8(binn_t map, const int id, int8_t *pvalue);
+extern int binn_map_get_int16(binn_t map, const int id, int16_t *pvalue);
+extern int binn_map_get_int32(binn_t map, const int id, int32_t *pvalue);
+extern int binn_map_get_int64(binn_t map, const int id, int64_t *pvalue);
+extern int binn_map_get_uint8(binn_t map, const int id, uint8_t *pvalue);
+extern int binn_map_get_uint16(binn_t map, const int id, uint16_t *pvalue);
+extern int binn_map_get_uint32(binn_t map, const int id, uint32_t *pvalue);
+extern int binn_map_get_uint64(binn_t map, const int id, uint64_t *pvalue);
+extern int binn_map_get_float(binn_t map, const int id, float  *pvalue);
+extern int binn_map_get_double(binn_t map, const int id, double *pvalue);
+extern int binn_map_get_bool(binn_t map, const int id, char *pvalue);
+extern int binn_map_get_blob(binn_t map, const int id, void **ptr, size_t *psize);
+extern int binn_map_get_string(binn_t map, const int id, char **str);
 
 // get from object
 extern int binn_object_get_list(binn_t object, const char const *key, binn_t *plist);
@@ -147,6 +147,24 @@ extern int binn_object_get_double(binn_t object, const char const *key, double *
 extern int binn_object_get_bool(binn_t object, const char const *key, char *pvalue);
 extern int binn_object_get_blob(binn_t object, const char const *key, void **ptr, size_t *psize);
 extern int binn_object_get_string(binn_t object, const char const *key, char **str);
+
+extern binn_t binn_object_list(binn_t object, const char const *key);
+extern binn_t binn_object_map(binn_t object, const char const *key);
+extern binn_t binn_object_object(binn_t object, const char const *key);
+extern int8_t binn_object_int8(binn_t object, const char const *key);
+extern int16_t binn_object_int16(binn_t object, const char const *key);
+extern int32_t binn_object_int32(binn_t object, const char const *key);
+extern int64_t binn_object_int64(binn_t object, const char const *key);
+extern uint8_t binn_object_uint8(binn_t object, const char const *key);
+extern uint16_t binn_object_uint16(binn_t object, const char const *key);
+extern uint32_t binn_object_uint32(binn_t object, const char const *key);
+extern uint64_t binn_object_uint64(binn_t object, const char const *key);
+extern float binn_object_float(binn_t object, const char const *key);
+extern double binn_object_double(binn_t object, const char const *key);
+extern char binn_object_bool(binn_t object, const char const *key);
+extern void* binn_object_blob(binn_t object, const char const *key, unsigned int *psize);
+extern char* binn_object_string(binn_t object, const char const *key);
+
 
 #ifdef __cplusplus
 }

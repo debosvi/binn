@@ -120,10 +120,9 @@ macro (GEN_BINN_ALL_XXX name type binn)
     # GEN_BINN_LIST_ADD_XXX(${name} ${type} ${binn})
     # GEN_BINN_LIST_GET_XXX(${name} ${type} ${binn})
 
-    # GEN_BINN_MAP_GET_XXX(${name} ${type} ${binn})
-    # GEN_BINN_MAP_SET_XXX(${name} ${type} ${binn})
+    GEN_BINN_MAP_GET_XXX(${name} ${type} ${binn})
+    GEN_BINN_MAP_SET_XXX(${name} ${type} ${binn})
 
-    # GEN_BINN_OBJECT_XXX(${name} ${type} ${binn})
     GEN_BINN_OBJECT_GET_XXX(${name} ${type} ${binn})
     GEN_BINN_OBJECT_SET_XXX(${name} ${type} ${binn})
 endmacro()

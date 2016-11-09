@@ -2,7 +2,7 @@
 #include "priv/binn.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, void *pvalue, unsigned int *psize) {
+int binn_map_get(binn_t obj, const unsigned int id, const binn_type_t type, void *pvalue, unsigned int *psize) {
     int _ret=1;
     binn_internal_t* p=0;
     binn_type_t ltype=BINN_TYPE_INIT;
@@ -11,22 +11,20 @@ int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, v
     p = binn_get_internal(obj);
     if(!p) goto exit;
     
-    if(!key) goto exit;
-    
     if(binn_is_valid(p, &ltype, &count)) goto exit;
     fprintf(stderr, "%s: bin is valid, type(%d), count(%d)\n", __FUNCTION__, ltype, count);
     
-    if(ltype!=BINN_TYPE_OBJECT) {
-        fprintf(stderr, "%s: bad type, expected(%d), found(%d)!\n", __FUNCTION__, BINN_TYPE_OBJECT, ltype);
+    if(ltype!=BINN_TYPE_MAP) {
+        fprintf(stderr, "%s: bad type, expected(%d), found(%d)!\n", __FUNCTION__, BINN_TYPE_MAP, ltype);
         goto exit;
     }
 
-    if(binn_search_for_key(obj, key)==BINN_INVALID) {
-        fprintf(stderr, "%s: key not found!\n", __FUNCTION__);
+    if(binn_search_for_id(obj, id)==BINN_INVALID) {
+        fprintf(stderr, "%s: id not found!\n", __FUNCTION__);
         goto exit;
     }
     
-    if(binn_get_value_from_key(obj, key, type, pvalue, psize)) {
+    if(binn_get_value_from_id(obj, id, type, pvalue, psize)) {
         fprintf(stderr, "%s: unable to add value!\n", __FUNCTION__);
         goto exit;
     }
@@ -35,7 +33,7 @@ int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, v
     
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable to set object, binn(%d), key(%s)!\n", __FUNCTION__, obj, key);
+        fprintf(stderr, "%s: unable to set object, binn(%d), id(%d)!\n", __FUNCTION__, obj, id);
     }
     return _ret;    
 }

@@ -9,22 +9,73 @@ static void die(const char const *msg) {
     exit(EXIT_FAILURE);
 }
 
-#define INIT_TEST_COMPLEX(name)                             \
+#define INIT_TEST_MAP(name)                                 \
+    binn_t name=binn_map();                                 \
+    if(name==BINN_INVALID)                                  \
+        die("Unable to create binn ##name");                \
+    fprintf(stderr, "binn %s created (%d)\n", #name, name);
+
+#define END_TEST_MAP(name)                                  \
+    binn_free(name); 
+
+static void test_map(void) {
+    int8_t i8=-123, i8_2=0, i8_3=0;
+    uint8_t u8=129, u8_2=0;
+    
+    INIT_TEST_MAP(head)
+
+    fprintf(stderr, "\nget id (%d), no data\n", 0);
+    if(binn_map_get_int8(head, 0, &i8_2))
+        fprintf(stderr, "Unable to add int8 value (normal case)\n"); 
+    else 
+        die("should have failed searching non existent element");
+    
+    fprintf(stderr, "\ninsert id (%d)\n", 0);
+    if(binn_map_set_int8(head, 0, i8))
+        die("Unable to add int8 value");  
+
+    fprintf(stderr, "\ninsert id (%d)\n", 1);
+    if(binn_map_set_int8(head, 1, u8))
+        die("Unable to add int8 value");  
+
+    fprintf(stderr, "\ninsert id (%d), once again\n", 0);
+    if(binn_map_set_int8(head, 0, i8))
+        fprintf(stderr, "Unable to add int8 value (normal case)\n");  
+    else die("Should have failed to add same id");
+    
+    fprintf(stderr, "\nget id (%d)\n", 0);
+    if(binn_map_get_int8(head, 0, &i8_2))
+        die("Unable to get id 0 value");  
+    fprintf(stderr, "result get id (%d), value(%d)\n", 0, i8_2);
+    
+    fprintf(stderr, "\nget id (%d)\n", 2);
+    if(binn_map_get_int8(head, 2, &i8_3))
+        fprintf(stderr, "result get id (%d), value(%d) (fails normal)\n", 2, i8_3);
+    else die("Should have failed to get unknown id");
+   
+    fprintf(stderr, "\nget id (%d)\n", 1);
+    if(binn_map_get_uint8(head, 1, &u8_2))
+        die("Unable to get id 1 value");   
+    fprintf(stderr, "result get id (%d), value(%d)\n", 0, u8_2);
+
+    END_TEST_MAP(head)
+
+}    
+
+#define INIT_TEST_OBJECT(name)                             \
     binn_t name=binn_object();                              \
     if(name==BINN_INVALID)                                  \
         die("Unable to create binn ##name");                \
     fprintf(stderr, "binn %s created (%d)\n", #name, name);
 
-#define END_TEST_COMPLEX(name)                              \
-    binn_free(name);                            
-    
-int main(int ac, char** av) {
-    int8_t i8=-123, i8_2=0;
+#define END_TEST_OBJECT(name)                              \
+    binn_free(name); 
+
+static void test_object(void) {
+    int8_t i8=-123, i8_2=0, i8_3=0;
     uint8_t u8=129, u8_2=0;
-    (void)ac;
-    (void)av;
     
-    INIT_TEST_COMPLEX(head)
+    INIT_TEST_OBJECT(head)
 
     fprintf(stderr, "\nget key (%s), no data\n", "int8");
     if(binn_object_get_int8(head, "int8", &i8_2))
@@ -43,11 +94,17 @@ int main(int ac, char** av) {
     fprintf(stderr, "\ninsert key (%s), once again\n", "int8");
     if(binn_object_set_int8(head, "int8", i8))
         fprintf(stderr, "Unable to add int8 value (normal case)\n");  
+    else die("Should have failed to add same key");
     
     fprintf(stderr, "\nget key (%s)\n", "int8");
     if(binn_object_get_int8(head, "int8", &i8_2))
         die("Unable to get int8 value");  
     fprintf(stderr, "result get key (%s), value(%d)\n", "int8", i8_2);
+    
+    fprintf(stderr, "\nget key (%s)\n", "int16");
+    if(binn_object_get_int8(head, "int16", &i8_3))
+        fprintf(stderr, "result get key (%s), value(%d) (fails normal)\n", "int8", i8_3);
+    else die("Should have failed to get unknown key");
    
     fprintf(stderr, "\nget key (%s)\n", "uint8");
     if(binn_object_get_uint8(head, "uint8", &u8_2))
@@ -55,7 +112,16 @@ int main(int ac, char** av) {
     fprintf(stderr, "result get key (%s), value(%d)\n", "uint8", u8_2);
 
 
-    END_TEST_COMPLEX(head)
+    END_TEST_OBJECT(head)
+
+}    
+    
+int main(int ac, char** av) {
+    (void)ac;
+    (void)av;
+    
+    test_map();
+    test_object();
     
     return 0;
 }

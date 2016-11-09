@@ -2,38 +2,30 @@
 #include "priv/binn.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_get_value(binn_t node, const char const *key, const binn_type_t type, void **pvalue, unsigned int *psize) {
+int binn_get_value_from_id(binn_t node, const unsigned int id, const binn_type_t type, void **pvalue, unsigned int *psize) {
     int _ret=1;
     register gensetdyn *container=0;
     binn_internal_t *p=0;
     binn_t *elem=0;
-    char *k=(char*)key;
-    char *next=0;
     unsigned int nelems=0;
+    
+    (void)psize;
            
     p = binn_get_internal(node);
     if(!p) goto exit;
     
-    fprintf(stderr, "%s: key(%s)\n", __FUNCTION__, key);
-    
-    if(!k) goto exit;
+    fprintf(stderr, "%s: id(%d)\n", __FUNCTION__, id);
+
     container=&p->data.container;  
     nelems=gensetdyn_n(container);    
     fprintf(stderr, "%s: nb elems(%d)\n", __FUNCTION__, nelems);
-    
-    next=strchr(k, '.');
-    if(next) (*next)=0;    
-
-    fprintf(stderr, "%s: single key(%s)\n", __FUNCTION__, k);
     
     for(int i=0; i<(int)nelems; i++) {
         elem=GENSETDYN_P(binn_t, container, i);
         fprintf(stderr, "%s: binn (%d)\n", __FUNCTION__, *elem);
         p = binn_get_internal(*elem);
-        fprintf(stderr, "%s: key (%s)\n", __FUNCTION__, p->key);
-        if(!strcmp(p->key, k)) {
-            if(next) return binn_get_value(*elem, next+1, type, pvalue, psize); 
-    
+        fprintf(stderr, "%s: id (%d)\n", __FUNCTION__, p->id);
+        if(p->id==id) {
             // local container
             fprintf(stderr, "%s: look at type (%d)\n", __FUNCTION__, type);
             switch(type) {
@@ -57,7 +49,7 @@ int binn_get_value(binn_t node, const char const *key, const binn_type_t type, v
         
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable to find key(%s)\n", __FUNCTION__, key);
+        fprintf(stderr, "%s: unable to find id(%d)\n", __FUNCTION__, id);
     }
     return _ret;
 }

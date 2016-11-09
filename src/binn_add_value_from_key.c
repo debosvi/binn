@@ -2,7 +2,7 @@
 #include "priv/binn.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_add_value(binn_t node, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size) {
+int binn_add_value_from_key(binn_t node, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size) {
     int _ret=1;
     register gensetdyn *container=0;
     binn_internal_t *p=0;
@@ -14,7 +14,7 @@ int binn_add_value(binn_t node, const char const *key, const binn_type_t type, c
     p = binn_get_internal(node);
     if(!p) goto exit;
     
-    fprintf(stderr, "%s: binn_add_value, key(%s)\n", __FUNCTION__, key);
+    fprintf(stderr, "%s: long key(%s)\n", __FUNCTION__, key);
     
     if(!k) goto exit;
     container=&p->data.container;  
@@ -31,14 +31,12 @@ int binn_add_value(binn_t node, const char const *key, const binn_type_t type, c
             elem=GENSETDYN_P(binn_t, container, i);
             p = binn_get_internal(*elem);
             if(!strcmp(p->key, k)) 
-                return binn_add_value(*elem, next+1, type, pvalue, size); 
+                return binn_add_value_from_key(*elem, next+1, type, pvalue, size); 
             fprintf(stderr, "%s: should have found key(%s)\n", __FUNCTION__, k);
         }
     }
     else {
         unsigned int nc=0, ns=0;
-
-        fprintf(stderr, "%s: key2(%s)\n", __FUNCTION__, k);
         
         if(!gensetdyn_new(&binn_storage_g, &ns)) {
             fprintf(stderr, "%s: no more space (storage)\n", __FUNCTION__);

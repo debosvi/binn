@@ -26,7 +26,7 @@ int binn_object_set(binn_t obj, const char const *key, const binn_type_t type, c
         goto exit;
     }
     
-    if(binn_add_value(obj, key, type, pvalue, size)) {
+    if(binn_add_value_from_key(obj, key, type, pvalue, size)) {
         fprintf(stderr, "%s: unable to add value!\n", __FUNCTION__);
         goto exit;
     }
