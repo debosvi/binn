@@ -62,6 +62,8 @@ static void test_list(void) {
     if(binn_list_get_uint8(head, 1, &u8_2))
         die("Unable to get pos 1 value");   
     fprintf(stderr, "result get pos (%d), value(%d)\n", 1, u8_2);
+    
+    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
 
     END_TEST_LIST(head)
     
@@ -120,6 +122,8 @@ static void test_map(void) {
     if(binn_map_get_uint8(head, 1, &u8_2))
         die("Unable to get id 1 value");   
     fprintf(stderr, "result get id (%d), value(%d)\n", 1, u8_2);
+    
+    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
 
     END_TEST_MAP(head)
     
@@ -179,7 +183,8 @@ static void test_object(void) {
     if(binn_object_get_uint8(head, "uint8", &u8_2))
         die("Unable to get uint8 value");  
     fprintf(stderr, "result get key (%s), value(%d)\n", "uint8", u8_2);
-
+    
+    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
 
     END_TEST_OBJECT(head)
     

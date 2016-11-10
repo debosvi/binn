@@ -38,10 +38,10 @@ extern void binn_set_alloc_functions(binn_malloc_f bm, binn_realloc_f br, binn_f
 extern int binn_list_add_list(binn_t list, const binn_t list2);
 extern int binn_list_add_map(binn_t list, const binn_t map);
 extern int binn_list_add_object(binn_t list, const binn_t obj);
-extern int binn_list_INIT_TEST_COMPLEX8(binn_t list, const int8_t value);
-extern int binn_list_INIT_TEST_COMPLEX16(binn_t list, const int16_t value);
-extern int binn_list_INIT_TEST_COMPLEX32(binn_t list, const int32_t value);
-extern int binn_list_INIT_TEST_COMPLEX64(binn_t list, const int64_t value);
+extern int binn_list_add_int8(binn_t list, const int8_t value);
+extern int binn_list_add_int16(binn_t list, const int16_t value);
+extern int binn_list_add_int32(binn_t list, const int32_t value);
+extern int binn_list_add_int64(binn_t list, const int64_t value);
 extern int binn_list_add_uint8(binn_t list, const uint8_t value);
 extern int binn_list_add_uint16(binn_t list, const uint16_t value);
 extern int binn_list_add_uint32(binn_t list, const uint32_t value);
@@ -95,22 +95,22 @@ extern int binn_object_set_string(binn_t object, const char const *key, const ch
 ///////////////////////////// READ ACCESSES ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // get from list
-extern int binn_list_get_list(binn_t list, const int pos, binn_t const *plist);
-extern int binn_list_get_map(binn_t list, const int pos, binn_t const *pmap);
-extern int binn_list_get_object(binn_t list, const int pos, binn_t const *pobject);
-extern int binn_list_get_int8(binn_t list, const int pos, int8_t const *pvalue);
-extern int binn_list_get_int16(binn_t list, const int pos, int16_t const *pvalue);
-extern int binn_list_get_int32(binn_t list, const int pos, int32_t const *pvalue);
-extern int binn_list_get_int64(binn_t list, const int pos, int64_t const *pvalue);
-extern int binn_list_get_uint8(binn_t list, const int pos, uint8_t const *pvalue);
-extern int binn_list_get_uint16(binn_t list, const int pos, uint16_t const *pvalue);
-extern int binn_list_get_uint32(binn_t list, const int pos, uint32_t const *pvalue);
-extern int binn_list_get_uint64(binn_t list, const int pos, uint64_t const *pvalue);
-extern int binn_list_get_float(binn_t list, const int pos, float const *pvalue);
-extern int binn_list_get_double(binn_t list, const int pos, double const *pvalue);
-extern int binn_list_get_bool(binn_t list, const int pos, char const *pvalue);
-extern int binn_list_get_blob(binn_t list, const int pos, void const const **ptr, size_t const *psize);
-extern int binn_list_get_string(binn_t list, const int pos, char const **str);
+extern int binn_list_get_list(binn_t list, const int pos, binn_t *plist);
+extern int binn_list_get_map(binn_t list, const int pos, binn_t *pmap);
+extern int binn_list_get_object(binn_t list, const int pos, binn_t *pobject);
+extern int binn_list_get_int8(binn_t list, const int pos, int8_t *pvalue);
+extern int binn_list_get_int16(binn_t list, const int pos, int16_t *pvalue);
+extern int binn_list_get_int32(binn_t list, const int pos, int32_t *pvalue);
+extern int binn_list_get_int64(binn_t list, const int pos, int64_t *pvalue);
+extern int binn_list_get_uint8(binn_t list, const int pos, uint8_t *pvalue);
+extern int binn_list_get_uint16(binn_t list, const int pos, uint16_t *pvalue);
+extern int binn_list_get_uint32(binn_t list, const int pos, uint32_t *pvalue);
+extern int binn_list_get_uint64(binn_t list, const int pos, uint64_t *pvalue);
+extern int binn_list_get_float(binn_t list, const int pos, float *pvalue);
+extern int binn_list_get_double(binn_t list, const int pos, double *pvalue);
+extern int binn_list_get_bool(binn_t list, const int pos, char *pvalue);
+extern int binn_list_get_blob(binn_t list, const int pos, void **ptr, size_t *psize);
+extern int binn_list_get_string(binn_t list, const int pos, char **str);
 
 // get from map
 extern int binn_map_get_list(binn_t map, const int id, binn_t *plist);
@@ -164,7 +164,6 @@ extern double binn_object_double(binn_t object, const char const *key);
 extern char binn_object_bool(binn_t object, const char const *key);
 extern void* binn_object_blob(binn_t object, const char const *key, unsigned int *psize);
 extern char* binn_object_string(binn_t object, const char const *key);
-
 
 #ifdef __cplusplus
 }

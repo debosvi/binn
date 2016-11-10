@@ -27,6 +27,7 @@ include_directories($ENV{HOME}/usr/include BEFORE)
 link_directories($ENV{HOME}/usr/lib/skalibs)
 
 include_directories(${CMAKE_BINARY_DIR}/include)
+link_directories($ENV{HOME}/usr/lib)
 
 add_subdirectory(include)
 
