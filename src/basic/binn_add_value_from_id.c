@@ -16,18 +16,29 @@ int binn_add_value_from_id(binn_t node, const unsigned int id, const binn_type_t
     
     container=&p->data.container;  
 
-    if(!gensetdyn_new(&binn_storage_g, &ns)) {
-        BINN_PRINT_ERROR("%s: no more space (storage)\n", __FUNCTION__);
-        goto exit;
-    }   
-    BINN_PRINT_DEBUG("%s: new binn created (%d)\n", __FUNCTION__, ns);
-    p = binn_get_internal(ns);
-    (*p)=binn_internal_zero;
-    p->magic = BINN_ITEM_MAGIC;
-    p->type=type;
+        
+    if( (type!=BINN_TYPE_LIST) &&
+        (type!=BINN_TYPE_MAP) &&
+        (type!=BINN_TYPE_OBJECT) 
+        ) {
+
+        if(!gensetdyn_new(&binn_storage_g, &ns)) {
+            BINN_PRINT_ERROR("%s: no more space (storage)\n", __FUNCTION__);
+            goto exit;
+        }   
+        BINN_PRINT_DEBUG("%s: new binn created (%d)\n", __FUNCTION__, ns);
+        p = binn_get_internal(ns);
+        (*p)=binn_internal_zero;
+        p->magic = BINN_ITEM_MAGIC;
+        p->type=type;
+        
+        binn_copy_value(pvalue, &p->data, type, size);
+    }
+    else {
+        p = binn_get_internal(*(binn_t*)pvalue);
+    }
+
     p->id=id;
-    
-    binn_copy_value(pvalue, &p->data, type, size);
 
     if(!gensetdyn_new(container, &nc)) {
         BINN_PRINT_ERROR("%s: no more space (container)\n", __FUNCTION__);
@@ -35,7 +46,15 @@ int binn_add_value_from_id(binn_t node, const unsigned int id, const binn_type_t
     }   
     BINN_PRINT_DEBUG("%s: new container element created (%d)\n", __FUNCTION__, nc);
     elem=GENSETDYN_P(binn_t, container, nc);
-    (*elem)=ns;
+    if( (type!=BINN_TYPE_LIST) &&
+        (type!=BINN_TYPE_MAP) &&
+        (type!=BINN_TYPE_OBJECT) 
+        ) {
+        (*elem)=ns;
+    }
+    else {
+        (*elem)=*(binn_t*)pvalue;
+    }            
     
     BINN_PRINT_DEBUG("%s: id added (%d)\n", __FUNCTION__, id);
     _ret=0;

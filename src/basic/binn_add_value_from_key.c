@@ -52,14 +52,14 @@ int binn_add_value_from_key(binn_t node, const char const *key, const binn_type_
             (*p)=binn_internal_zero;
             p->magic = BINN_ITEM_MAGIC;
             p->type=type;
-            p->key=strdup(k);
 
             binn_copy_value(pvalue, &p->data, type, size);
         }
         else {
             p = binn_get_internal(*(binn_t*)pvalue);
-            p->key = strdup(k);
         }
+
+        p->key=strdup(k);
 
         if(!gensetdyn_new(container, &nc)) {
             BINN_PRINT_ERROR("%s: no more space (container)\n", __FUNCTION__);
