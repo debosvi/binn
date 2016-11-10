@@ -25,7 +25,7 @@ int binn_map_get(binn_t obj, const unsigned int id, const binn_type_t type, void
     }
     
     if(binn_get_value_from_id(obj, id, type, pvalue, psize)) {
-        fprintf(stderr, "%s: unable to add value!\n", __FUNCTION__);
+        fprintf(stderr, "%s: unable to get value!\n", __FUNCTION__);
         goto exit;
     }
     
@@ -33,7 +33,7 @@ int binn_map_get(binn_t obj, const unsigned int id, const binn_type_t type, void
     
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable to set object, binn(%d), id(%d)!\n", __FUNCTION__, obj, id);
+        fprintf(stderr, "%s: unable to get object, binn(%d), id(%d)!\n", __FUNCTION__, obj, id);
     }
     return _ret;    
 }

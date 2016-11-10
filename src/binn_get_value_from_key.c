@@ -1,59 +1,54 @@
 
 #include "priv/binn.h"
 
+typedef struct {
+    char *key;
+    binn_type_t type;
+    void **pvalue;
+    unsigned int *psize;
+    binn_internal_t* p;
+} sid_stuff_t;
+
+///////////////////////////////////////////////////////////////////////////////
+static int binn_get_value_from_key_iter_func(char *item, void *stuff) {
+    int _ret=1;
+    binn_t *elem=(binn_t*)item;
+    sid_stuff_t* owned = (sid_stuff_t*)stuff;
+    char *k=owned->key;
+    char *next=0;
+    binn_internal_t* p=0;
+    
+    next=strchr(k, '.');
+    if(next) (*next)=0;
+
+    p=binn_get_internal(*elem);     
+    if(!strcmp(p->key, owned->key)) { 
+        if(next) return binn_get_value_from_key(*elem, next+1, owned->type, owned->pvalue, owned->psize);          
+        owned->p=p;
+        _ret=0;
+    }    
+    return _ret;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_t type, void **pvalue, unsigned int *psize) {
     int _ret=1;
-    register gensetdyn *container=0;
-    binn_internal_t *p=0;
-    binn_t *elem=0;
-    char *k=(char*)key;
-    char *next=0;
-    unsigned int nelems=0;
+    binn_internal_t* p=0;
+    sid_stuff_t stuff = { .p=0, .key=(char*)key, .type=type, .pvalue=pvalue, .psize=psize };
            
     p = binn_get_internal(node);
     if(!p) goto exit;
     
     fprintf(stderr, "%s: key(%s)\n", __FUNCTION__, key);
     
-    if(!k) goto exit;
-    container=&p->data.container;  
-    nelems=gensetdyn_n(container);    
-    fprintf(stderr, "%s: nb elems(%d)\n", __FUNCTION__, nelems);
+    if(!key) goto exit;    
+   
+    gensetdyn_iter(&p->data.container, binn_get_value_from_key_iter_func, &stuff);
     
-    next=strchr(k, '.');
-    if(next) (*next)=0;    
-
-    fprintf(stderr, "%s: single key(%s)\n", __FUNCTION__, k);
-    
-    for(int i=0; i<(int)nelems; i++) {
-        elem=GENSETDYN_P(binn_t, container, i);
-        fprintf(stderr, "%s: binn (%d)\n", __FUNCTION__, *elem);
-        p = binn_get_internal(*elem);
-        fprintf(stderr, "%s: key (%s)\n", __FUNCTION__, p->key);
-        if(!strcmp(p->key, k)) {
-            if(next) return binn_get_value_from_key(*elem, next+1, type, pvalue, psize); 
-    
-            // local container
-            fprintf(stderr, "%s: look at type (%d)\n", __FUNCTION__, type);
-            switch(type) {
-                case BINN_TYPE_UINT8: (*(uint8_t*)pvalue) = p->data.vuint8; break;
-                case BINN_TYPE_INT8: (*(int8_t*)pvalue) = p->data.vint8; break;
-                case BINN_TYPE_UINT16: (*(uint16_t*)pvalue) = p->data.vuint16; break;
-                case BINN_TYPE_INT16: (*(int16_t*)pvalue) = p->data.vint16; break;
-                case BINN_TYPE_UINT32: (*(uint32_t*)pvalue) = p->data.vuint32; break;
-                case BINN_TYPE_INT32: (*(int32_t*)pvalue) = p->data.vint32; break;
-                case BINN_TYPE_UINT64: (*(uint64_t*)pvalue) = p->data.vuint64; break;
-                case BINN_TYPE_INT64: (*(int64_t*)pvalue) = p->data.vint64; break;
-                
-                default:
-                    fprintf(stderr, "%s: type not managed (%d)\n", __FUNCTION__, type);
-            }
-            
-            _ret=0;
-        }
+    if(stuff.p) {
+        binn_get_value(&stuff.p->data, pvalue, type);        
+        _ret=0;
     }
-
         
 exit:
     if(_ret) {

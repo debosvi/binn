@@ -49,19 +49,7 @@ int binn_add_value_from_key(binn_t node, const char const *key, const binn_type_
         p->type=type;
         p->key=strdup(k);
         
-        switch(type) {
-            case BINN_TYPE_UINT8: p->data.vuint8 = *(uint8_t*)pvalue; break;
-            case BINN_TYPE_INT8: p->data.vint8 = *(int8_t*)pvalue; break;
-            case BINN_TYPE_UINT16: p->data.vuint16 = *(uint16_t*)pvalue; break;
-            case BINN_TYPE_INT16: p->data.vint16 = *(int16_t*)pvalue; break;
-            case BINN_TYPE_UINT32: p->data.vuint32 = *(uint32_t*)pvalue; break;
-            case BINN_TYPE_INT32: p->data.vint32 = *(int32_t*)pvalue; break;
-            case BINN_TYPE_UINT64: p->data.vuint64 = *(uint64_t*)pvalue; break;
-            case BINN_TYPE_INT64: p->data.vint64 = *(int64_t*)pvalue; break;
-            
-            default:
-                fprintf(stderr, "%s: type not managed (%d)\n", __FUNCTION__, type);
-        }
+        binn_copy_value(pvalue, &p->data, type, size);
 
         if(!gensetdyn_new(container, &nc)) {
             fprintf(stderr, "%s: no more space (container)\n", __FUNCTION__);
