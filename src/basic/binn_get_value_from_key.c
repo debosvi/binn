@@ -2,6 +2,7 @@
 #include "priv/binn.h"
 
 typedef struct {
+    binn_t b;
     char *key;
     binn_type_t type;
     void **pvalue;
@@ -25,16 +26,17 @@ static int binn_get_value_from_key_iter_func(char *item, void *stuff) {
     if(!strcmp(p->key, owned->key)) { 
         if(next) return binn_get_value_from_key(*elem, next+1, owned->type, owned->pvalue, owned->psize);          
         owned->p=p;
+        owned->b=(*elem);        
         _ret=0;
     }    
     return _ret;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_t type, void **pvalue, unsigned int *psize) {
+int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_t type, void *pvalue, unsigned int *psize) {
     int _ret=1;
     binn_internal_t* p=0;
-    sid_stuff_t stuff = { .p=0, .key=(char*)key, .type=type, .pvalue=pvalue, .psize=psize };
+    sid_stuff_t stuff = { .b=BINN_INVALID, .p=0, .key=(char*)key, .type=type, .pvalue=pvalue, .psize=psize };
            
     p = binn_get_internal(node);
     if(!p) goto exit;
@@ -47,7 +49,16 @@ int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_
         
     if(stuff.p) {
         if(stuff.p->type==type) {        
-            binn_get_value(&stuff.p->data, pvalue, type);            
+            if( (type!=BINN_TYPE_LIST) &&
+                (type!=BINN_TYPE_MAP) &&
+                (type!=BINN_TYPE_OBJECT) 
+                ) {
+                    
+                binn_get_value(&stuff.p->data, pvalue, type);            
+            }
+            else {
+                *(binn_t*)pvalue = stuff.b;
+            }
             _ret=0;
         }
         else {

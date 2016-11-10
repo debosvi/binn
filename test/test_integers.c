@@ -21,6 +21,7 @@ static void die(const char const *msg) {
 #define END_TEST_LIST(name)                                  \
     binn_free(name); 
 
+///////////////////////////////////////////////////////////////////////////////
 static void test_list(void) {
     int8_t i8=-123, i8_2=0;
     uint8_t u8=129, u8_2=0, u8_3=0;
@@ -67,6 +68,7 @@ static void test_list(void) {
     
     fprintf(stderr, "%s: END\n", __FUNCTION__);
 } 
+
 ///////////////////////////////////////////////////////////////////////////////
 /////////////////////////////// MAP ///////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,6 +81,7 @@ static void test_list(void) {
 #define END_TEST_MAP(name)                                  \
     binn_free(name); 
 
+///////////////////////////////////////////////////////////////////////////////
 static void test_map(void) {
     int8_t i8=-123, i8_2=0, i8_3=0;
     uint8_t u8=129, u8_2=0;
@@ -138,6 +141,7 @@ static void test_map(void) {
 #define END_TEST_OBJECT(name)                              \
     binn_free(name); 
 
+///////////////////////////////////////////////////////////////////////////////
 static void test_object(void) {
     int8_t i8=-123, i8_2=0, i8_3=0;
     uint8_t u8=129, u8_2=0;
@@ -186,6 +190,7 @@ static void test_object(void) {
     fprintf(stderr, "%s: END\n", __FUNCTION__);
 }    
     
+///////////////////////////////////////////////////////////////////////////////
 int main(int ac, char** av) {
     (void)ac;
     (void)av;

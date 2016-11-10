@@ -22,7 +22,7 @@ static int binn_get_value_from_pos_iter_func(char *item, void *stuff) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_get_value_from_pos(binn_t node, const unsigned int pos, const binn_type_t type, void **pvalue, unsigned int *psize) {
+int binn_get_value_from_pos(binn_t node, const unsigned int pos, const binn_type_t type, void *pvalue, unsigned int *psize) {
     int _ret=1;
     binn_internal_t* p=0;
     sid_stuff_t stuff = { .p=0, .pos=pos };

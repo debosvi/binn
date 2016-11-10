@@ -80,7 +80,6 @@ int binn_get_value(const void const *psource, void *pdest, const binn_type_t typ
         case BINN_TYPE_STRING: 
             _ret=binn_get_raw_value(psource, pdest, type);
             break;
-
         
         default:
             BINN_PRINT_DEBUG("%s: type not managed (%d)\n", __FUNCTION__, type);

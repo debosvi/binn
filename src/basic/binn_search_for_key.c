@@ -47,7 +47,7 @@ binn_t binn_search_for_key(binn_t node, const char const *key) {
     
 exit:
     if(_ret==BINN_INVALID) {
-        BINN_PRINT_ERROR("%s: unable to find key(%s)\n", __FUNCTION__, key);
+        BINN_PRINT_DEBUG("%s: unable to find key(%s)\n", __FUNCTION__, key);
     }
     return _ret;
 }

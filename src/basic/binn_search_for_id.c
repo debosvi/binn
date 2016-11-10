@@ -39,7 +39,7 @@ binn_t binn_search_for_id(binn_t node, const unsigned int id) {
     
 exit:
     if(_ret==BINN_INVALID) {
-        BINN_PRINT_ERROR("%s: unable to find id(%d)\n", __FUNCTION__, id);
+        BINN_PRINT_DEBUG("%s: unable to find id(%d)\n", __FUNCTION__, id);
     }
     return _ret;
 }

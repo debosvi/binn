@@ -90,9 +90,9 @@ extern int binn_add_value_from_key(const binn_t node, const char const *key, con
 extern int binn_add_value_from_id(const binn_t node, const unsigned int id, const binn_type_t type, const void const *pvalue, const unsigned int size);
 extern int binn_add_value_from_pos(const binn_t node, const binn_type_t type, const void const *pvalue, const unsigned int size);
 
-extern int binn_get_value_from_key(const binn_t node, const char const *key, const binn_type_t type, void **pvalue, unsigned int *psize);
-extern int binn_get_value_from_id(const binn_t node, const unsigned int id, const binn_type_t type, void **pvalue, unsigned int *psize);
-extern int binn_get_value_from_pos(const binn_t node, const unsigned int pos, const binn_type_t type, void **pvalue, unsigned int *psize);
+extern int binn_get_value_from_key(const binn_t node, const char const *key, const binn_type_t type, void *pvalue, unsigned int *psize);
+extern int binn_get_value_from_id(const binn_t node, const unsigned int id, const binn_type_t type, void *pvalue, unsigned int *psize);
+extern int binn_get_value_from_pos(const binn_t node, const unsigned int pos, const binn_type_t type, void *pvalue, unsigned int *psize);
 
 extern binn_t binn_new(const binn_type_t type, const void const *ptr, const unsigned int size);
 extern int binn_create(const binn_t item, const binn_type_t type, const void const *ptr, const unsigned int size);
@@ -141,6 +141,7 @@ extern int binn_object_next(binn_iter_t *iter, binn_t *node, const binn_type_t t
     
 // debug
 
+// #define __DEBUG__
 #ifdef __DEBUG__
 #define BINN_PRINT_DEBUG(...)   fprintf(stderr, __VA_ARGS__)
 #else

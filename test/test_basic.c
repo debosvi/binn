@@ -9,6 +9,7 @@ static void die(const char const *msg) {
     exit(EXIT_FAILURE);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 #define INIT_TEST_COMPLEX(name)                             \
     binn_t name=binn_##name();                              \
     if(name==BINN_INVALID)                                  \
@@ -18,6 +19,7 @@ static void die(const char const *msg) {
 #define END_TEST_COMPLEX(name)                              \
     binn_free(name);                            
     
+///////////////////////////////////////////////////////////////////////////////
 int main(int ac, char** av) {
     (void)ac;
     (void)av;

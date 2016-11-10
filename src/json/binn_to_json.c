@@ -1,6 +1,4 @@
 
-#define __DEBUG__
-
 #include "priv/binn_json.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,7 +34,7 @@ static json_t* binn_to_json_complex(const binn_type_t type, const binn_t node) {
         case BINN_TYPE_LIST: 
             value = json_array();
             binn_list_foreach(node, binn_value) {
-                BINN_PRINT_ERROR("%s: loop list binn (%d)\n", __FUNCTION__, binn_value);
+                BINN_PRINT_DEBUG("%s: loop list binn (%d)\n", __FUNCTION__, binn_value);
                 json_array_append_new(value, binn_to_json(binn_value));
             }
             break;
@@ -44,9 +42,9 @@ static json_t* binn_to_json_complex(const binn_type_t type, const binn_t node) {
         case BINN_TYPE_MAP: 
             value = json_object();
             binn_map_foreach(node, binn_value) {
-                BINN_PRINT_ERROR("%s: loop object binn (%d)\n", __FUNCTION__, binn_value);
+                BINN_PRINT_DEBUG("%s: loop object binn (%d)\n", __FUNCTION__, binn_value);
                 binn_map_get_id(binn_value, &id);
-                BINN_PRINT_ERROR("%s: id (%d)\n", __FUNCTION__, id);
+                BINN_PRINT_DEBUG("%s: id (%d)\n", __FUNCTION__, id);
                 snprintf(tmp, 16, "%d", id);                
                 json_object_set_new(value, tmp, binn_to_json(binn_value));
             }
@@ -55,9 +53,9 @@ static json_t* binn_to_json_complex(const binn_type_t type, const binn_t node) {
         case BINN_TYPE_OBJECT: 
             value = json_object();
             binn_object_foreach(node, binn_value) {
-                BINN_PRINT_ERROR("%s: loop object binn (%d)\n", __FUNCTION__, binn_value);
+                BINN_PRINT_DEBUG("%s: loop object binn (%d)\n", __FUNCTION__, binn_value);
                 binn_object_get_key(binn_value, &key);
-                BINN_PRINT_ERROR("%s: key (%s)\n", __FUNCTION__, key);
+                BINN_PRINT_DEBUG("%s: key (%s)\n", __FUNCTION__, key);
                 json_object_set_new(value, key, binn_to_json(binn_value));
             }
             break;

@@ -6,7 +6,7 @@ int binn_all_next(binn_iter_t *iter, binn_t *node, const binn_type_t type) {
     int _ret=1;
     binn_t *elem=0;    
     
-    fprintf(stderr, "%s: iter(%p), node(%p)\n", __FUNCTION__, iter, node);
+    BINN_PRINT_DEBUG(stderr, "%s: iter(%p), node(%p)\n", __FUNCTION__, iter, node);
     
     if(!iter) goto exit;
     if(!node) goto exit;
@@ -21,7 +21,7 @@ int binn_all_next(binn_iter_t *iter, binn_t *node, const binn_type_t type) {
 
 exit:
     if(_ret) {
-        BINN_PRINT_ERROR("%s: unable get next node\n", __FUNCTION__);
+        BINN_PRINT_DEBUG("%s: unable get next node\n", __FUNCTION__);
     }
     return _ret;
 }
