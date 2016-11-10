@@ -34,7 +34,8 @@ int binn_create(binn_t item, const binn_type_t type, const void const *ptr, cons
             gensetdyn_init(&_p->data.container, sizeof(binn_t), 16, 3, 8);
             break;
         default:
-            fprintf(stderr, "%s: type not managed (%d)\n", __FUNCTION__, type);            
+            BINN_PRINT_ERROR("%s: type not managed (%d)\n", __FUNCTION__, type);            
+            break;
     }
     
       // if (pointer) {
@@ -54,7 +55,7 @@ int binn_create(binn_t item, const binn_type_t type, const void const *ptr, cons
 
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable to create element!\n", __FUNCTION__);
+        BINN_PRINT_ERROR("%s: unable to create element!\n", __FUNCTION__);
     }
     return _ret;
 }

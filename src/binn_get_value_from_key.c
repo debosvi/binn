@@ -39,20 +39,25 @@ int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_
     p = binn_get_internal(node);
     if(!p) goto exit;
     
-    fprintf(stderr, "%s: key(%s)\n", __FUNCTION__, key);
+    BINN_PRINT_DEBUG("%s: key(%s)\n", __FUNCTION__, key);
     
     if(!key) goto exit;    
-   
-    gensetdyn_iter(&p->data.container, binn_get_value_from_key_iter_func, &stuff);
     
+    gensetdyn_iter(&p->data.container, binn_get_value_from_key_iter_func, &stuff);
+        
     if(stuff.p) {
-        binn_get_value(&stuff.p->data, pvalue, type);        
-        _ret=0;
+        if(stuff.p->type==type) {        
+            binn_get_value(&stuff.p->data, pvalue, type);            
+            _ret=0;
+        }
+        else {
+            BINN_PRINT_ERROR("%s: bad type, expected(%d), current(%d)\n", __FUNCTION__, type, stuff.p->type);
+        }
     }
         
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable to find key(%s)\n", __FUNCTION__, key);
+        BINN_PRINT_ERROR("%s: unable to find key(%s)\n", __FUNCTION__, key);
     }
     return _ret;
 }

@@ -12,9 +12,9 @@ static int binn_search_for_id_iter_func(char *item, void *stuff) {
     binn_t *elem=(binn_t*)item;
     sid_stuff_t* owned = (sid_stuff_t*)stuff;
     binn_internal_t* p=binn_get_internal(*elem);  
-    fprintf(stderr, "%s: ids, expected (%d), current(%d)\n", __FUNCTION__, owned->id, p->id);    
+    BINN_PRINT_DEBUG("%s: ids, expected (%d), current(%d)\n", __FUNCTION__, owned->id, p->id);    
     if(p->id == owned->id) { 
-        fprintf(stderr, "%s: match ids (%d)\n", __FUNCTION__, p->id);   
+        BINN_PRINT_DEBUG("%s: match ids (%d)\n", __FUNCTION__, p->id);   
         owned->binn=(*elem);
         _ret=0;
     }    
@@ -30,7 +30,7 @@ binn_t binn_search_for_id(binn_t node, const unsigned int id) {
     p = binn_get_internal(node);
     if(!p) goto exit;
     
-    fprintf(stderr, "%s: id (%d)\n", __FUNCTION__, id);
+    BINN_PRINT_DEBUG("%s: id (%d)\n", __FUNCTION__, id);
     
     gensetdyn_iter(&p->data.container, binn_search_for_id_iter_func, &stuff);
     
@@ -39,7 +39,7 @@ binn_t binn_search_for_id(binn_t node, const unsigned int id) {
     
 exit:
     if(_ret==BINN_INVALID) {
-        fprintf(stderr, "%s: unable to find id(%d)\n", __FUNCTION__, id);
+        BINN_PRINT_ERROR("%s: unable to find id(%d)\n", __FUNCTION__, id);
     }
     return _ret;
 }

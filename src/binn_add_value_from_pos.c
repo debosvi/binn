@@ -12,15 +12,15 @@ int binn_add_value_from_pos(binn_t node, const binn_type_t type, const void cons
     p = binn_get_internal(node);
     if(!p) goto exit;
     
-    fprintf(stderr, "%s: new position\n", __FUNCTION__);
+    BINN_PRINT_DEBUG("%s: new position, type (%d)\n", __FUNCTION__, type);
     
     container=&p->data.container;  
         
     if(!gensetdyn_new(&binn_storage_g, &ns)) {
-        fprintf(stderr, "%s: no more space (storage)\n", __FUNCTION__);
+        BINN_PRINT_ERROR("%s: no more space (storage)\n", __FUNCTION__);
         goto exit;
     }   
-    fprintf(stderr, "%s: new binn created (%d)\n", __FUNCTION__, ns);
+    BINN_PRINT_DEBUG("%s: new binn created (%d)\n", __FUNCTION__, ns);
     p = binn_get_internal(ns);
     (*p)=binn_internal_zero;
     p->magic = BINN_ITEM_MAGIC;
@@ -29,21 +29,21 @@ int binn_add_value_from_pos(binn_t node, const binn_type_t type, const void cons
     binn_copy_value(pvalue, &p->data, type, size);
 
     if(!gensetdyn_new(container, &nc)) {
-        fprintf(stderr, "%s: no more space (container)\n", __FUNCTION__);
+        BINN_PRINT_ERROR("%s: no more space (container)\n", __FUNCTION__);
         goto exit;
     }   
-    fprintf(stderr, "%s: new container element created (%d)\n", __FUNCTION__, nc);
+    BINN_PRINT_DEBUG("%s: new container element created (%d)\n", __FUNCTION__, nc);
     elem=GENSETDYN_P(binn_t, container, nc);
     (*elem)=ns;
 
     p->id=nc;
     
-    fprintf(stderr, "%s: value added in pos (%d)\n", __FUNCTION__, nc);
+    BINN_PRINT_DEBUG("%s: value added in pos (%d)\n", __FUNCTION__, nc);
     _ret=0;
         
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable add new position\n", __FUNCTION__);
+        BINN_PRINT_ERROR("%s: unable add new position\n", __FUNCTION__);
     }
     return _ret;
 }

@@ -17,7 +17,8 @@ static int binn_copy_int_value(const void const *psource, void *pdest, const bin
         case BINN_TYPE_INT64: *(int64_t*)pdest = *(int64_t*)psource; break; 
        
         default:
-            fprintf(stderr, "%s: type not allowed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not allowed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;  
@@ -33,7 +34,8 @@ static int binn_copy_float_value(const void const *psource, void *pdest, const b
         case BINN_TYPE_DOUBLE: *(double*)pdest = *(double*)psource; break; 
                
         default:
-            fprintf(stderr, "%s: type not allowed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not allowed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;  
@@ -49,7 +51,8 @@ static int binn_copy_raw_value(const void const *psource, void *pdest, const bin
         case BINN_TYPE_STRING: *(double*)pdest = *(double*)psource; break; 
                
         default:
-            fprintf(stderr, "%s: type not allowed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not allowed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;  
@@ -82,7 +85,8 @@ int binn_copy_value(const void const *psource, void *pdest, const binn_type_t ty
             break;
         
         default:
-            fprintf(stderr, "%s: type not managed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not managed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;

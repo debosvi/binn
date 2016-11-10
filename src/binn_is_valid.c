@@ -17,11 +17,19 @@ int binn_is_valid(binn_internal_t *item, binn_type_t *ptype, unsigned int *pcoun
             count = gensetdyn_n(&item->data.container);
             break;
         case BINN_TYPE_INT8:
+        case BINN_TYPE_UINT8:
+        case BINN_TYPE_INT16:
+        case BINN_TYPE_UINT16:
+        case BINN_TYPE_INT32:
+        case BINN_TYPE_UINT32:
+        case BINN_TYPE_INT64:
+        case BINN_TYPE_UINT64:
             count = 1;
             break;
             
         default:
-            fprintf(stderr, "%s: type not managed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_DEBUG("%s: type not managed (%d)\n", __FUNCTION__, type);
+            break;
     }
 
     if (ptype) (*ptype) = type;

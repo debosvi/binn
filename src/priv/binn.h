@@ -107,4 +107,14 @@ extern int binn_object_set(binn_t obj, const char const *key, const binn_type_t 
 extern int binn_copy_value(const void const *psource, void *pdest, const binn_type_t type, const unsigned int size);
 extern int binn_get_value(const void const *psource, void *pdest, const binn_type_t type);
 
+// debug
+
+#ifdef __DEBUG__
+#define BINN_PRINT_DEBUG(...)   fprintf(stderr, __VA_ARGS__)
+#else
+#define BINN_PRINT_DEBUG(...)
+#endif
+
+#define BINN_PRINT_ERROR(...)   fprintf(stderr, __VA_ARGS__)
+
 #endif // PRIVATE_BINN_H

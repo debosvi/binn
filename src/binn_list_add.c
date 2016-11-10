@@ -12,15 +12,15 @@ int binn_list_add(binn_t obj, const binn_type_t type, const void const *pvalue, 
     if(!p) goto exit;
     
     if(binn_is_valid(p, &ltype, &count)) goto exit;
-    fprintf(stderr, "%s: bin is valid, type(%d), count(%d)\n", __FUNCTION__, ltype, count);
+    BINN_PRINT_DEBUG("%s: bin is valid, type(%d), count(%d)\n", __FUNCTION__, ltype, count);
     
     if(ltype!=BINN_TYPE_LIST) {
-        fprintf(stderr, "%s: bad type, expected(%d), found(%d)!\n", __FUNCTION__, BINN_TYPE_OBJECT, ltype);
+        BINN_PRINT_ERROR("%s: bad type, expected(%d), found(%d)!\n", __FUNCTION__, BINN_TYPE_OBJECT, ltype);
         goto exit;
     }
         
     if(binn_add_value_from_pos(obj, type, pvalue, size)) {
-        fprintf(stderr, "%s: unable to add value!\n", __FUNCTION__);
+        BINN_PRINT_ERROR("%s: unable to add value!\n", __FUNCTION__);
         goto exit;
     }
     
@@ -28,7 +28,7 @@ int binn_list_add(binn_t obj, const binn_type_t type, const void const *pvalue, 
     
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable to add element, binn(%d)!\n", __FUNCTION__, obj);
+        BINN_PRINT_ERROR("%s: unable to add element, binn(%d)!\n", __FUNCTION__, obj);
     }
     return _ret;    
 }

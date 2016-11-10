@@ -7,6 +7,8 @@ int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, v
     binn_internal_t* p=0;
     binn_type_t ltype=BINN_TYPE_INIT;
     unsigned int count=0;
+        
+    BINN_PRINT_DEBUG("%s: binn, type(%d)\n", __FUNCTION__, type);
     
     p = binn_get_internal(obj);
     if(!p) goto exit;
@@ -14,20 +16,20 @@ int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, v
     if(!key) goto exit;
     
     if(binn_is_valid(p, &ltype, &count)) goto exit;
-    fprintf(stderr, "%s: bin is valid, type(%d), count(%d)\n", __FUNCTION__, ltype, count);
+    BINN_PRINT_DEBUG("%s: bin is valid, type(%d), count(%d)\n", __FUNCTION__, ltype, count);
     
     if(ltype!=BINN_TYPE_OBJECT) {
-        fprintf(stderr, "%s: bad type, expected(%d), found(%d)!\n", __FUNCTION__, BINN_TYPE_OBJECT, ltype);
+        BINN_PRINT_ERROR("%s: bad type, expected(%d), found(%d)!\n", __FUNCTION__, BINN_TYPE_OBJECT, ltype);
         goto exit;
     }
 
     if(binn_search_for_key(obj, key)==BINN_INVALID) {
-        fprintf(stderr, "%s: key not found!\n", __FUNCTION__);
+        BINN_PRINT_ERROR("%s: key not found!\n", __FUNCTION__);
         goto exit;
     }
     
     if(binn_get_value_from_key(obj, key, type, pvalue, psize)) {
-        fprintf(stderr, "%s: unable to get value!\n", __FUNCTION__);
+        BINN_PRINT_ERROR("%s: unable to get value!\n", __FUNCTION__);
         goto exit;
     }
     
@@ -35,7 +37,7 @@ int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, v
     
 exit:
     if(_ret) {
-        fprintf(stderr, "%s: unable to get object, binn(%d), key(%s)!\n", __FUNCTION__, obj, key);
+        BINN_PRINT_ERROR("%s: unable to get object, binn(%d), key(%s)!\n", __FUNCTION__, obj, key);
     }
     return _ret;    
 }

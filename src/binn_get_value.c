@@ -16,7 +16,8 @@ static int binn_get_int_value(const void const *psource, void *pdest, const binn
         case BINN_TYPE_INT64: *(int64_t*)pdest = *(int64_t*)psource; break; 
        
         default:
-            fprintf(stderr, "%s: type not allowed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not allowed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;  
@@ -31,7 +32,8 @@ static int binn_get_float_value(const void const *psource, void *pdest, const bi
         case BINN_TYPE_DOUBLE: *(double*)pdest = *(double*)psource; break; 
                
         default:
-            fprintf(stderr, "%s: type not allowed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not allowed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;  
@@ -46,7 +48,8 @@ static int binn_get_raw_value(const void const *psource, void *pdest, const binn
         case BINN_TYPE_STRING: *(double*)pdest = *(double*)psource; break; 
                
         default:
-            fprintf(stderr, "%s: type not allowed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not allowed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;  
@@ -80,7 +83,8 @@ int binn_get_value(const void const *psource, void *pdest, const binn_type_t typ
 
         
         default:
-            fprintf(stderr, "%s: type not managed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_DEBUG("%s: type not managed (%d)\n", __FUNCTION__, type);
+            break;
     }    
 
     return _ret;

@@ -11,7 +11,7 @@ static void binn_free_internal_storage(binn_t item) {
     p = binn_get_internal(item);
     container=&p->data.container;    
     nelems=gensetdyn_n(container);
-    fprintf(stderr, "%s: nb elems (%d)\n", __FUNCTION__, nelems);
+    BINN_PRINT_DEBUG("%s: nb elems (%d)\n", __FUNCTION__, nelems);
     
     for(int i=0; i<(int)nelems; i++) {
         elem=GENSETDYN_P(binn_t, container, i);
@@ -25,7 +25,7 @@ void binn_free(binn_t item) {
     
     if(item==BINN_INVALID) goto exit;
     
-    fprintf(stderr, "%s: binn (%d)\n", __FUNCTION__, item);            
+    BINN_PRINT_DEBUG("%s: binn (%d)\n", __FUNCTION__, item);            
     
     _p = GENSETDYN_P(binn_internal_t, &binn_storage_g, item);
     if(!_p) goto exit;
@@ -55,11 +55,12 @@ void binn_free(binn_t item) {
             
         case BINN_TYPE_STRING:
         case BINN_TYPE_BLOB:
-            fprintf(stderr, "%s: type not managed (%d)\n", __FUNCTION__, _p->type);            
+            BINN_PRINT_DEBUG("%s: type not managed (%d)\n", __FUNCTION__, _p->type);            
             break;
             
         default:
-            fprintf(stderr, "%s: should not happen, type (%d)\n", __FUNCTION__, _p->type);            
+            BINN_PRINT_ERROR("%s: should not happen, type (%d)\n", __FUNCTION__, _p->type);   
+            break;
     }
     
     // last reset
