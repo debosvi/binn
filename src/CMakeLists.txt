@@ -1,4 +1,5 @@
 
+###############################################################################
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/gen)
 
@@ -34,19 +35,36 @@ set(LOCAL_SOURCES
     binn_list_get.c
     binn_map.c
     binn_map_get.c
+    binn_map_get_id.c
     binn_map_set.c
     binn_new.c
     binn_object.c
     binn_object_get.c
+    binn_object_get_key.c
     binn_object_set.c
     binn_search_for_id.c
     binn_search_for_key.c
     binn_search_for_pos.c
     
-    # binn_json.c 
+    ## iterations
+    binn_iter_init.c
+    binn_all_next.c
 
     ## generated
-    ${LOCAL_GEN_FILES})
+    ${LOCAL_GEN_FILES}
+)
 
 add_library(binn STATIC ${LOCAL_SOURCES})
 target_link_libraries(binn skarnet)
+
+###############################################################################
+set(LOCAL_SOURCES
+    binn_to_json.c
+    binn_to_json_str.c
+)
+
+add_library(binn_json STATIC ${LOCAL_SOURCES})
+target_link_libraries(binn_json 
+    binn 
+    jansson
+)

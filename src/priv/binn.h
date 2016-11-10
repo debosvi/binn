@@ -82,31 +82,63 @@ extern binn_type_t binn_type(binn_t node);
 extern int binn_is_valid(binn_internal_t *item, binn_type_t *ptype, unsigned int *pcount);
 extern binn_internal_t* binn_get_internal(binn_t node);
 
-extern binn_t binn_search_for_key(binn_t node, const char const *key);
-extern binn_t binn_search_for_id(binn_t node, const unsigned int id);
-extern binn_t binn_search_for_pos(binn_t node, const unsigned int pos);
+extern binn_t binn_search_for_key(const binn_t node, const char const *key);
+extern binn_t binn_search_for_id(const binn_t node, const unsigned int id);
+extern binn_t binn_search_for_pos(const binn_t node, const unsigned int pos);
 
-extern int binn_add_value_from_key(binn_t node, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size);
-extern int binn_add_value_from_id(binn_t node, const unsigned int id, const binn_type_t type, const void const *pvalue, const unsigned int size);
-extern int binn_add_value_from_pos(binn_t node, const binn_type_t type, const void const *pvalue, const unsigned int size);
+extern int binn_add_value_from_key(const binn_t node, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size);
+extern int binn_add_value_from_id(const binn_t node, const unsigned int id, const binn_type_t type, const void const *pvalue, const unsigned int size);
+extern int binn_add_value_from_pos(const binn_t node, const binn_type_t type, const void const *pvalue, const unsigned int size);
 
-extern int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_t type, void **pvalue, unsigned int *psize);
-extern int binn_get_value_from_id(binn_t node, const unsigned int id, const binn_type_t type, void **pvalue, unsigned int *psize);
-extern int binn_get_value_from_pos(binn_t node, const unsigned int pos, const binn_type_t type, void **pvalue, unsigned int *psize);
+extern int binn_get_value_from_key(const binn_t node, const char const *key, const binn_type_t type, void **pvalue, unsigned int *psize);
+extern int binn_get_value_from_id(const binn_t node, const unsigned int id, const binn_type_t type, void **pvalue, unsigned int *psize);
+extern int binn_get_value_from_pos(const binn_t node, const unsigned int pos, const binn_type_t type, void **pvalue, unsigned int *psize);
 
 extern binn_t binn_new(const binn_type_t type, const void const *ptr, const unsigned int size);
-extern int binn_create(binn_t item, const binn_type_t type, const void const *ptr, const unsigned int size);
+extern int binn_create(const binn_t item, const binn_type_t type, const void const *ptr, const unsigned int size);
 
-extern int binn_list_add(binn_t obj, const binn_type_t type, const void *pvalue, const unsigned int size);
-extern int binn_list_get(binn_t obj, const unsigned int pos, const binn_type_t type, void *pvalue, unsigned int *psize);
-extern int binn_map_get(binn_t obj, const unsigned int id, const binn_type_t type, void *pvalue, unsigned int *psize);
-extern int binn_map_set(binn_t obj, const unsigned int id, const binn_type_t type, const void const *pvalue, const unsigned int size);
-extern int binn_object_get(binn_t obj, const char const *key, const binn_type_t type, void *pvalue, unsigned int *psize);
-extern int binn_object_set(binn_t obj, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size);
+extern int binn_list_add(const binn_t list, const binn_type_t type, const void *pvalue, const unsigned int size);
+extern int binn_list_get(const binn_t list, const unsigned int pos, const binn_type_t type, void *pvalue, unsigned int *psize);
+extern int binn_map_get(const binn_t map, const unsigned int id, const binn_type_t type, void *pvalue, unsigned int *psize);
+extern int binn_map_set(const binn_t map, const unsigned int id, const binn_type_t type, const void const *pvalue, const unsigned int size);
+extern int binn_object_get(const binn_t obj, const char const *key, const binn_type_t type, void *pvalue, unsigned int *psize);
+extern int binn_object_set(const binn_t obj, const char const *key, const binn_type_t type, const void const *pvalue, const unsigned int size);
 
 extern int binn_copy_value(const void const *psource, void *pdest, const binn_type_t type, const unsigned int size);
 extern int binn_get_value(const void const *psource, void *pdest, const binn_type_t type);
 
+extern int binn_object_get_key(const binn_t node, char **key);
+extern int binn_map_get_id(const binn_t node, unsigned int *id);
+
+// iterations
+typedef struct {
+    binn_data_t *data;
+    binn_type_t type;
+    int   count;
+    int   current;
+} binn_iter_t;
+#define BINN_ITER_ZERO { .data=0, .type=BINN_INVALID, .count=0, .current=0 }
+extern const binn_iter_t binn_iter_zero;
+
+extern int binn_iter_init(binn_iter_t *iter, const binn_t node, const binn_type_t type);
+
+extern int binn_all_next(binn_iter_t *iter, binn_t *node, const binn_type_t type);
+extern int binn_map_next(binn_iter_t *iter, binn_t *node, const binn_type_t type);
+extern int binn_object_next(binn_iter_t *iter, binn_t *node, const binn_type_t type);
+
+
+#define binn_list_foreach(list, value)              \
+    binn_iter_init(&iter, list, BINN_TYPE_LIST);    \
+    while (!binn_all_next(&iter, &value, BINN_TYPE_LIST))
+
+#define binn_map_foreach(map, value)                \
+    binn_iter_init(&iter, map, BINN_TYPE_MAP);      \
+    while (!binn_all_next(&iter, &value, BINN_TYPE_MAP))
+
+#define binn_object_foreach(obj, value)             \
+    binn_iter_init(&iter, obj, BINN_TYPE_OBJECT);   \
+    while (!binn_all_next(&iter, &value, BINN_TYPE_OBJECT))
+    
 // debug
 
 #ifdef __DEBUG__
