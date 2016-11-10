@@ -13,6 +13,8 @@ GEN_BINN_ALL_XXX("int32"     "int32_t"   "BINN_TYPE_INT32")
 GEN_BINN_ALL_XXX("uint32"    "uint32_t"  "BINN_TYPE_UINT32")
 GEN_BINN_ALL_XXX("int64"     "int64_t"   "BINN_TYPE_INT64")
 GEN_BINN_ALL_XXX("uint64"    "uint64_t"  "BINN_TYPE_UINT64")
+GEN_BINN_ALL_XXX("list"      "binn_t"    "BINN_TYPE_LIST")
+GEN_BINN_ALL_XXX("map"       "binn_t"    "BINN_TYPE_MAP")
 GEN_BINN_ALL_XXX("object"    "binn_t"    "BINN_TYPE_OBJECT")
 
 file(GLOB_RECURSE LOCAL_GEN_FILES ${CMAKE_CURRENT_BINARY_DIR}/gen/*.c)
