@@ -6,6 +6,7 @@ static int binn_get_int_value(const void const *psource, void *pdest, const binn
     int _ret=0;
 
     switch(type) {
+        case BINN_TYPE_BOOL: *(char*)pdest = *(char*)psource; break;
         case BINN_TYPE_UINT8: *(uint8_t*)pdest = *(uint8_t*)psource; break;
         case BINN_TYPE_INT8: *(int8_t*)pdest = *(int8_t*)psource; break; 
         case BINN_TYPE_UINT16: *(uint16_t*)pdest = *(uint16_t*)psource; break; 
@@ -60,6 +61,7 @@ int binn_get_value(const void const *psource, void *pdest, const binn_type_t typ
     int _ret=0;
 
     switch(type) {
+        case BINN_TYPE_BOOL: 
         case BINN_TYPE_UINT8: 
         case BINN_TYPE_INT8: 
         case BINN_TYPE_UINT16: 
@@ -82,7 +84,7 @@ int binn_get_value(const void const *psource, void *pdest, const binn_type_t typ
             break;
         
         default:
-            BINN_PRINT_DEBUG("%s: type not managed (%d)\n", __FUNCTION__, type);
+            BINN_PRINT_ERROR("%s: type not managed (%d)\n", __FUNCTION__, type);
             break;
     }    
 

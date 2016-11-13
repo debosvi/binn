@@ -6,7 +6,7 @@ int binn_all_next(binn_iter_t *iter, binn_t *node, const binn_type_t type) {
     int _ret=1;
     binn_t *elem=0;    
     
-    BINN_PRINT_DEBUG(stderr, "%s: iter(%p), node(%p)\n", __FUNCTION__, iter, node);
+    BINN_PRINT_DEBUG("%s: iter(%p), node(%p)\n", __FUNCTION__, iter, node);
     
     if(!iter) goto exit;
     if(!node) goto exit;

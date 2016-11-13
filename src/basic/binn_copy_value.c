@@ -7,6 +7,7 @@ static int binn_copy_int_value(const void const *psource, void *pdest, const bin
     (void)size;
     
     switch(type) {
+        case BINN_TYPE_BOOL: *(char*)pdest = (*(char*)psource?1:0); break;
         case BINN_TYPE_UINT8: *(uint8_t*)pdest = *(uint8_t*)psource; break;
         case BINN_TYPE_INT8: *(int8_t*)pdest = *(int8_t*)psource; break; 
         case BINN_TYPE_UINT16: *(uint16_t*)pdest = *(uint16_t*)psource; break; 
@@ -63,6 +64,7 @@ int binn_copy_value(const void const *psource, void *pdest, const binn_type_t ty
     int _ret=0;
 
     switch(type) {
+        case BINN_TYPE_BOOL: 
         case BINN_TYPE_UINT8: 
         case BINN_TYPE_INT8: 
         case BINN_TYPE_UINT16: 

@@ -17,6 +17,7 @@ typedef enum {
     BINN_TYPE_NULL,
     BINN_TYPE_TRUE,
     BINN_TYPE_FALSE,
+    BINN_TYPE_BOOL,
 
     BINN_TYPE_UINT8,
     BINN_TYPE_INT8,
@@ -76,6 +77,8 @@ extern int binn_initialized;
 extern gensetdyn binn_storage_g;
 #define BINN_STORAGE_ZERO   GENSETDYN_ZERO 
 
+typedef void (*binn_mem_free)(void*);
+
 extern void binn_init(void);
 
 extern binn_type_t binn_type(binn_t node);
@@ -96,6 +99,7 @@ extern int binn_get_value_from_pos(const binn_t node, const unsigned int pos, co
 
 extern binn_t binn_new(const binn_type_t type, const void const *ptr, const unsigned int size);
 extern int binn_create(const binn_t item, const binn_type_t type, const void const *ptr, const unsigned int size);
+extern binn_t binn_value(const binn_type_t type, const void const *pvalue, const unsigned int size, binn_mem_free freefn);
 
 extern int binn_list_add(const binn_t list, const binn_type_t type, const void *pvalue, const unsigned int size);
 extern int binn_list_get(const binn_t list, const unsigned int pos, const binn_type_t type, void *pvalue, unsigned int *psize);

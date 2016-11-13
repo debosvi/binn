@@ -39,6 +39,7 @@ void binn_free(binn_t item) {
             break;
             
         case BINN_TYPE_NULL:
+        case BINN_TYPE_BOOL:
         case BINN_TYPE_TRUE:
         case BINN_TYPE_FALSE:
         case BINN_TYPE_UINT8:
