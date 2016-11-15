@@ -71,16 +71,16 @@ extern int binn_to_blob(const binn_t item, char **pvalue, unsigned int *psize);
 ///////////////////////////////////////////////////////////////////////////////
 extern int binn_list_add_item(binn_t list, const binn_t item);
 //extern int binn_list_add_null(binn_t list);
-extern int binn_map_set_item(binn_t map, const int id, const binn_t item);
+extern int binn_map_add_item(binn_t map, const unsigned int id, const binn_t item);
 //extern int binn_map_set_null(binn_t map, const int id);
-extern int binn_object_set_item(binn_t object, const char const *key, const binn_t item);
+extern int binn_object_add_item(binn_t object, const char const *key, const binn_t item);
 //extern int binn_object_set_null(binn_t object, const char const *key);
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// READ ACCESSES ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-extern int binn_list_get_item(binn_t list, const int pos, binn_t *item);
-extern int binn_map_get_item(binn_t map, const int id, binn_t *item);
+extern int binn_list_get_item(binn_t list, const unsigned int pos, binn_t *item);
+extern int binn_map_get_item(binn_t map, const unsigned int id, binn_t *item);
 extern int binn_object_get_item(binn_t object, const char const *key, binn_t *item);
 
 #ifdef __cplusplus

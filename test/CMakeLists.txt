@@ -14,20 +14,7 @@ install(TARGETS test_basic
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
 )
 
-##############################################################################
-# set(LOCAL_SOURCES
-    # test_integers.c
-# )
-
-# add_executable(test_integers ${LOCAL_SOURCES})
-# target_link_libraries(test_integers binn)
-
-# install(TARGETS test_integers
-    # RUNTIME
-    # DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
-# )
-
-##############################################################################
+###############################################################################
 # set(LOCAL_SOURCES
     # test_json.c
 # )
@@ -40,18 +27,18 @@ install(TARGETS test_basic
     # DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
 # )
 
-##############################################################################
-# set(LOCAL_SOURCES
-    # test_sublist.c
-# )
+###############################################################################
+set(LOCAL_SOURCES
+    test_sublist.c
+)
 
-# add_executable(test_sublist ${LOCAL_SOURCES})
-# target_link_libraries(test_sublist binn_json)
+add_executable(test_sublist ${LOCAL_SOURCES})
+target_link_libraries(test_sublist binn)
 
-# install(TARGETS test_sublist
-    # RUNTIME
-    # DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
-# )
+install(TARGETS test_sublist
+    RUNTIME
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
+)
 
 ##############################################################################
 # set(LOCAL_SOURCES

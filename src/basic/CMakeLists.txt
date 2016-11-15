@@ -23,11 +23,11 @@ GEN_BINN_ALL_XXX("bool"      "char"      "BINN_TYPE_BOOL")
 file(GLOB_RECURSE LOCAL_GEN_FILES ${CMAKE_CURRENT_BINARY_DIR}/gen/*.c)
 
 set(LOCAL_SOURCES
-    binn_add_value_from_key.c
-    binn_add_value_from_id.c
+    # binn_add_value_from_key.c
+    # binn_add_value_from_id.c
     binn_add_value_from_pos.c
-    binn_get_value_from_key.c
-    binn_get_value_from_id.c
+    # binn_get_value_from_key.c
+    # binn_get_value_from_id.c
     binn_get_value_from_pos.c
     binn_copy_value.c
     binn_create.c
@@ -37,19 +37,22 @@ set(LOCAL_SOURCES
     binn_internal.c
     binn_is_valid.c
     binn_list.c
-    binn_list_add.c
-    binn_list_get.c
+    # binn_list_add.c
+    binn_list_add_item.c
+    binn_list_get_item.c
+    # binn_list_get.c
     binn_map.c
-    binn_map_get.c
-    binn_map_get_id.c
-    binn_map_set.c
+    # binn_map_add_item.c
+    # binn_map_get.c
+    # binn_map_get_id.c
+    # binn_map_set.c
     binn_new.c
     binn_object.c
-    binn_object_get.c
-    binn_object_get_key.c
-    binn_object_set.c
-    binn_search_for_id.c
-    binn_search_for_key.c
+    # binn_object_get.c
+    # binn_object_get_key.c
+    # binn_object_set.c
+    # binn_search_for_id.c
+    # binn_search_for_key.c
     binn_search_for_pos.c
     
     ## iterations
