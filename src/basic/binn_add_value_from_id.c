@@ -2,7 +2,7 @@
 #include "priv/binn.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_add_value_from_id(binn_internal_t* p, const binn_t item, const unsigned int id) {
+int binn_add_value_from_id(binn_internal_t* p, const unsigned int id, const binn_t item) {
     int _ret=1;
     binn_internal_t *p2=0;
     binn_t *elem=0;

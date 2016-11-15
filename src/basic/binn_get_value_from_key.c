@@ -2,12 +2,8 @@
 #include "priv/binn.h"
 
 typedef struct {
-    binn_t b;
     char *key;
-    binn_type_t type;
-    void **pvalue;
-    unsigned int *psize;
-    binn_internal_t* p;
+    binn_t elem;
 } sid_stuff_t;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,28 +11,21 @@ static int binn_get_value_from_key_iter_func(char *item, void *stuff) {
     int _ret=1;
     binn_t *elem=(binn_t*)item;
     sid_stuff_t* owned = (sid_stuff_t*)stuff;
-    char *k=owned->key;
-    char *next=0;
-    binn_internal_t* p=0;
-    
-    next=strchr(k, '.');
-    if(next) (*next)=0;
-
-    p=binn_get_internal(*elem);     
+    binn_internal_t* p=binn_get_internal(*elem);  
+    BINN_PRINT_DEBUG("%s: ids, expected (%s), current(%s)\n", __FUNCTION__, owned->key, p->key);     
     if(!strcmp(p->key, owned->key)) { 
-        if(next) return binn_get_value_from_key(*elem, next+1, owned->type, owned->pvalue, owned->psize);          
-        owned->p=p;
-        owned->b=(*elem);        
+        BINN_PRINT_DEBUG("%s: match keys (%s)\n", __FUNCTION__, p->key);   
+        owned->elem=(*elem);
         _ret=0;
     }    
     return _ret;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_t type, void *pvalue, unsigned int *psize) {
+int binn_get_value_from_key(const binn_t node, const char const *key, binn_t *item) {
     int _ret=1;
     binn_internal_t* p=0;
-    sid_stuff_t stuff = { .b=BINN_INVALID, .p=0, .key=(char*)key, .type=type, .pvalue=pvalue, .psize=psize };
+    sid_stuff_t stuff = { .elem=BINN_INVALID, .key=(char*)key };
            
     p = binn_get_internal(node);
     if(!p) goto exit;
@@ -47,24 +36,13 @@ int binn_get_value_from_key(binn_t node, const char const *key, const binn_type_
     
     gensetdyn_iter(&p->data.container, binn_get_value_from_key_iter_func, &stuff);
         
-    if(stuff.p) {
-        if(stuff.p->type==type) {        
-            if( (type!=BINN_TYPE_LIST) &&
-                (type!=BINN_TYPE_MAP) &&
-                (type!=BINN_TYPE_OBJECT) 
-                ) {
-                    
-                binn_get_value(&stuff.p->data, pvalue, type);            
-            }
-            else {
-                *(binn_t*)pvalue = stuff.b;
-            }
-            _ret=0;
-        }
-        else {
-            BINN_PRINT_ERROR("%s: bad type, expected(%d), current(%d)\n", __FUNCTION__, type, stuff.p->type);
-        }
-    }
+	if(stuff.elem!=BINN_INVALID) {        
+		(*item) = stuff.elem;            
+		_ret=0;
+	}
+	else {
+		BINN_PRINT_ERROR("%s: no elem found for key (%s)\n", __FUNCTION__, key);
+	}
         
 exit:
     if(_ret) {
