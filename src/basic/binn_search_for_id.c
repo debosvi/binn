@@ -10,7 +10,8 @@ typedef struct {
 static int binn_search_for_id_iter_func(char *item, void *stuff) {
     int _ret=1;
     binn_t *elem=(binn_t*)item;
-    sid_stuff_t* owned = (sid_stuff_t*)stuff;
+    BINN_PRINT_DEBUG("%s: elem(%d)\n", __FUNCTION__, *elem);    
+	sid_stuff_t* owned = (sid_stuff_t*)stuff;
     binn_internal_t* p=binn_get_internal(*elem);  
     BINN_PRINT_DEBUG("%s: ids, expected (%d), current(%d)\n", __FUNCTION__, owned->id, p->id);    
     if(p->id == owned->id) { 

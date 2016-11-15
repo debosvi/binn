@@ -41,17 +41,17 @@ install(TARGETS test_sublist
 )
 
 ##############################################################################
-# set(LOCAL_SOURCES
-    # test_submap.c
-# )
+set(LOCAL_SOURCES
+    test_submap.c
+)
 
-# add_executable(test_submap ${LOCAL_SOURCES})
-# target_link_libraries(test_submap binn_json)
+add_executable(test_submap ${LOCAL_SOURCES})
+target_link_libraries(test_submap binn)
 
-# install(TARGETS test_submap
-    # RUNTIME
-    # DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
-# )
+install(TARGETS test_submap
+    RUNTIME
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
+)
 
 ##############################################################################
 # set(LOCAL_SOURCES

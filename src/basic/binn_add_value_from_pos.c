@@ -11,7 +11,6 @@ int binn_add_value_from_pos(binn_internal_t* p, const binn_t item) {
     if(!p) goto exit;
     p2 = binn_get_internal(item);
     if(!p2) goto exit;
-	p2->id=nc;
     
     BINN_PRINT_DEBUG("%s: internal(%p), item(%d)\n", __FUNCTION__, p, item);
 	

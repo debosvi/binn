@@ -89,8 +89,8 @@ extern binn_t binn_search_for_key(const binn_t node, const char const *key);
 extern binn_t binn_search_for_id(const binn_t node, const unsigned int id);
 extern binn_t binn_search_for_pos(const binn_t node, const unsigned int pos);
 
-extern int binn_add_value_from_key(binn_internal_t* p, const char const *key, const binn_t item);
-extern int binn_add_value_from_id(binn_internal_t* p, const unsigned int id, const binn_t item);
+extern int binn_add_value_from_key(binn_internal_t* p, const binn_t item, const char const *key);
+extern int binn_add_value_from_id(binn_internal_t* p, const binn_t item, const unsigned int id);
 extern int binn_add_value_from_pos(binn_internal_t* p, const binn_t item);
 
 extern int binn_get_value_from_key(const binn_t node, const char const *key, binn_t *item);

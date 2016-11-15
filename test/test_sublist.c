@@ -38,22 +38,22 @@ int main(int ac, char** av) {
     fprintf(stderr, "\npouplate success\n");
   
     if(binn_list_get_item(sub, 0, &bi8_r))
-        die("Unable to get binn item 0 from sub list");
-	if(binn_to_int8(bi8_r, &i8_r))
-        die("Unable to get value of binn item 0");
-	if(i8_r!=i8)
-        fprintf(stderr, "I8 values differs, expected (%d), current (%d)\n", i8, i8_r);
+        fprintf(stderr, "Unable to get binn item (%d) from sub list\n", 0);
+	else if(binn_to_int8(bi8_r, &i8_r))
+        fprintf(stderr, "Unable to get value of binn item (%d)\n", 0);
+	else if(i8_r!=i8)
+        fprintf(stderr, "i8 values differs for binn item (%d), expected (%d), current (%d)\n", 0, i8, i8_r);
     else
-		fprintf(stderr, "I8 values matches(%d)\n", i8);
+		fprintf(stderr, "i8 values matches for binn item (%d), value(%d)\n", 0, i8);
   
     if(binn_list_get_item(sub, 1, &bu16_r))
-        die("Unable to get binn item 1 from sub list");
-	if(binn_to_uint16(bu16_r, &u16_r))
-        die("Unable to get value of binn item 1");
-	if(u16_r!=u16)
-        fprintf(stderr, "U16 values differs, expected (%d), current (%d)\n", u16, u16_r);
+        fprintf(stderr, "Unable to get binn item (%d) from sub list\n", 1);
+	else if(binn_to_uint16(bu16_r, &u16_r))
+        fprintf(stderr, "Unable to get value of binn item (%d)\n", 1);
+	else if(u16_r!=u16)
+        fprintf(stderr, "u16 values differs for binn item (%d), expected (%d), current (%d)\n", 1, u16, u16_r);
     else
-		fprintf(stderr, "U16 values matches(%d)\n", u16);
+		fprintf(stderr, "u16 values matches for binn item (%d), value(%d)\n", 1, u16);
 
 	if(binn_to_int8(bu16_r, &i8_r))
         fprintf(stderr, "Unable to get value of binn item 1 (normal case)\n");

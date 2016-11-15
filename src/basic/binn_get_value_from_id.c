@@ -3,7 +3,7 @@
 
 typedef struct {
     unsigned int id;
-    binn_internal_t* p;
+    binn_t elem;
 } sid_stuff_t;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,19 +15,17 @@ static int binn_get_value_from_id_iter_func(char *item, void *stuff) {
     BINN_PRINT_DEBUG("%s: ids, expected (%d), current(%d)\n", __FUNCTION__, owned->id, p->id);    
     if(p->id == owned->id) { 
         BINN_PRINT_DEBUG("%s: match ids (%d)\n", __FUNCTION__, p->id);   
-        owned->p=p;
+        owned->elem=(*elem);
         _ret=0;
     }    
     return _ret;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int binn_get_value_from_id(binn_t node, const unsigned int id, const binn_type_t type, void *pvalue, unsigned int *psize) {
+int binn_get_value_from_id(binn_t node, const unsigned int id, binn_t *item) {
     int _ret=1;
     binn_internal_t* p=0;
-    sid_stuff_t stuff = { .p=0, .id=id };
-    
-    (void)psize;
+    sid_stuff_t stuff = { .elem=BINN_INVALID, .id=id };
            
     p = binn_get_internal(node);
     if(!p) goto exit;
@@ -36,15 +34,13 @@ int binn_get_value_from_id(binn_t node, const unsigned int id, const binn_type_t
     
     gensetdyn_iter(&p->data.container, binn_get_value_from_id_iter_func, &stuff);
         
-    if(stuff.p) {
-        if(stuff.p->type==type) {        
-            binn_get_value(&stuff.p->data, pvalue, type);            
-            _ret=0;
-        }
-        else {
-            BINN_PRINT_ERROR("%s: bad type, expected(%d), current(%d)\n", __FUNCTION__, type, stuff.p->type);
-        }
-    }
+	if(stuff.elem!=BINN_INVALID) {        
+		(*item) = stuff.elem;            
+		_ret=0;
+	}
+	else {
+		BINN_PRINT_ERROR("%s: no elem found for id (%d)\n", __FUNCTION__, id);
+	}
     
 exit:
     if(_ret) {

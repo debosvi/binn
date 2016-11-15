@@ -41,7 +41,6 @@ int binn_get_value_from_pos(binn_t node, const unsigned int pos, binn_t *item) {
 	else {
 		BINN_PRINT_ERROR("%s: no elem found at position (%d)\n", __FUNCTION__, pos);
 	}
-
         
 exit:
     if(_ret) {
