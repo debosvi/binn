@@ -1,7 +1,6 @@
 
-set(LOCAL_SOURCES
-    binn.c
-    binn_json.c    
-)
+###############################################################################
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(binn STATIC ${LOCAL_SOURCES})
+add_subdirectory(basic)
+add_subdirectory(json)
