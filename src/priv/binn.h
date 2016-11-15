@@ -101,8 +101,6 @@ extern binn_t binn_new(const binn_type_t type, const void const *ptr, const unsi
 extern int binn_create(const binn_t item, const binn_type_t type, const void const *ptr, const unsigned int size);
 extern binn_t binn_value(const binn_type_t type, const void const *pvalue, const unsigned int size, binn_mem_free freefn);
 
-extern int binn_add_item_inside(binn_internal_t* p, const binn_t item);
-
 // extern int binn_list_add(const binn_t list, const binn_type_t type, const void *pvalue, const unsigned int size);
 // extern int binn_list_get(const binn_t list, const unsigned int pos, const binn_type_t type, void *pvalue, unsigned int *psize);
 // extern int binn_map_get(const binn_t map, const unsigned int id, const binn_type_t type, void *pvalue, unsigned int *psize);

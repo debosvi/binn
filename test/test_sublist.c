@@ -55,6 +55,9 @@ int main(int ac, char** av) {
     else
 		fprintf(stderr, "U16 values matches(%d)\n", u16);
 
+	if(binn_to_int8(bu16_r, &i8_r))
+        fprintf(stderr, "Unable to get value of binn item 1 (normal case)\n");
+	
     fprintf(stderr, "%s: SUCCESS\n", __FUNCTION__);
     return 0;
 }
