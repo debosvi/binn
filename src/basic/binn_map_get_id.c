@@ -15,7 +15,7 @@ int binn_map_get_id(const binn_t node, unsigned int *id) {
     if(binn_is_valid(p, &ltype, &count)) goto exit;
     BINN_PRINT_DEBUG("%s: bin is valid, type(%d), count(%d)\n", __FUNCTION__, ltype, count);
     
-    // if(ltype!=type) {
+    // if(ltype!=BINN_TYPE_MAP) {
         // BINN_PRINT_ERROR("%s: bad type, expected(%d), current(%d)\n", __FUNCTION__, BINN_TYPE_OBJECT, ltype);
         // goto exit;
     // }

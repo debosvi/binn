@@ -10,200 +10,81 @@ static void die(const char const *msg) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/////////////////////////////// LIST ///////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-#define INIT_TEST_LIST(name)                                \
-    binn_t name=binn_list();                                \
-    if(name==BINN_INVALID)                                  \
-        die("Unable to create binn ##name");                \
-    fprintf(stderr, "binn %s created (%d)\n", #name, name);
+static binn_t build_list(void) {
+    const int8_t i8=-49;
+    const uint16_t u16=1234;
+	 
+    binn_t sub=binn_list();   
+	binn_t bi8=binn_int8(i8);
+	binn_t bu16=binn_uint16(u16);
 
-#define END_TEST_LIST(name)                                  \
-    binn_free(name); 
-
-///////////////////////////////////////////////////////////////////////////////
-static void test_list(void) {
-    int8_t i8=-123, i8_2=0;
-    uint8_t u8=129, u8_2=0, u8_3=0;
-    
-    fprintf(stderr, "\n\n%s: START\n", __FUNCTION__);
-    
-    INIT_TEST_LIST(head)
-
-    fprintf(stderr, "\nget pos (%d), no data\n", 0);
-    if(binn_list_get_int8(head, 10, &i8_2))
-        fprintf(stderr, "Unable to get int8 value (normal case)\n"); 
-    else 
-        die("should have failed searching non existent element");
-    
-    fprintf(stderr, "\ninsert new int8\n");
-    if(binn_list_add_int8(head, i8))
+    if(binn_list_add_item(sub, bi8))
         die("Unable to add int8 value");  
 
-    fprintf(stderr, "\ninsert new uint8\n");
-    if(binn_list_add_uint8(head, u8))
-        die("Unable to add uint8 value 1");  
-
-    fprintf(stderr, "\ninsert new int8\n");
-    if(binn_list_add_int8(head, u8))
-        die("Unable to add int8 value 2");
-    
-    fprintf(stderr, "\nget pos (%d)\n", 0);
-    if(binn_list_get_int8(head, 0, &i8_2))
-        die("Unable to get pos 0 value");  
-    fprintf(stderr, "result get pos (%d), value(%d)\n", 0, i8_2);
-   
-    fprintf(stderr, "\nget pos (%d)\n", 2);
-    if(binn_list_get_uint8(head, 2, &u8_3))
-        fprintf(stderr, "Unable to get pos 2 value\n");   
-    else 
-        die("should have failed searching bad type element");
-   
-    fprintf(stderr, "\nget pos (%d)\n", 1);
-    if(binn_list_get_uint8(head, 1, &u8_2))
-        die("Unable to get pos 1 value");   
-    fprintf(stderr, "result get pos (%d), value(%d)\n", 1, u8_2);
-    
-    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
-
-    END_TEST_LIST(head)
-    
-    fprintf(stderr, "%s: END\n", __FUNCTION__);
-} 
-
-///////////////////////////////////////////////////////////////////////////////
-/////////////////////////////// MAP ///////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-#define INIT_TEST_MAP(name)                                 \
-    binn_t name=binn_map();                                 \
-    if(name==BINN_INVALID)                                  \
-        die("Unable to create binn ##name");                \
-    fprintf(stderr, "binn %s created (%d)\n", #name, name);
-
-#define END_TEST_MAP(name)                                  \
-    binn_free(name); 
-
-///////////////////////////////////////////////////////////////////////////////
-static void test_map(void) {
-    int8_t i8=-123, i8_2=0, i8_3=0;
-    uint8_t u8=129, u8_2=0;
-        
-    fprintf(stderr, "\n\n%s: START\n", __FUNCTION__);
-    
-    INIT_TEST_MAP(head)
-
-    fprintf(stderr, "\nget id (%d), no data\n", 0);
-    if(binn_map_get_int8(head, 0, &i8_2))
-        fprintf(stderr, "Unable to get int8 value (normal case)\n"); 
-    else 
-        die("should have failed searching non existent element");
-    
-    fprintf(stderr, "\ninsert id (%d)\n", 0);
-    if(binn_map_set_int8(head, 0, i8))
+    if(binn_list_add_item(sub, bu16))
         die("Unable to add int8 value");  
 
-    fprintf(stderr, "\ninsert id (%d)\n", 1);
-    if(binn_map_set_uint8(head, 1, u8))
-        die("Unable to add uint8 value");  
-
-    fprintf(stderr, "\ninsert id (%d), once again\n", 0);
-    if(binn_map_set_int8(head, 0, i8))
-        fprintf(stderr, "Unable to add int8 value (normal case)\n");  
-    else die("Should have failed to add same id");
-    
-    fprintf(stderr, "\nget id (%d)\n", 0);
-    if(binn_map_get_int8(head, 0, &i8_2))
-        die("Unable to get id 0 value");  
-    fprintf(stderr, "result get id (%d), value(%d)\n", 0, i8_2);
-    
-    fprintf(stderr, "\nget id (%d)\n", 2);
-    if(binn_map_get_int8(head, 2, &i8_3))
-        fprintf(stderr, "result get id (%d), value(%d) (fails normal)\n", 2, i8_3);
-    else die("Should have failed to get unknown id");
-   
-    fprintf(stderr, "\nget id (%d)\n", 1);
-    if(binn_map_get_uint8(head, 1, &u8_2))
-        die("Unable to get id 1 value");   
-    fprintf(stderr, "result get id (%d), value(%d)\n", 1, u8_2);
-    
-    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
-
-    END_TEST_MAP(head)
-    
-    fprintf(stderr, "%s: END\n", __FUNCTION__);
-}    
+    return sub;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
-/////////////////////////////// OBJECT ////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-#define INIT_TEST_OBJECT(name)                             \
-    binn_t name=binn_object();                              \
-    if(name==BINN_INVALID)                                  \
-        die("Unable to create binn ##name");                \
-    fprintf(stderr, "binn %s created (%d)\n", #name, name);
+static binn_t build_map(void) {
+    const int8_t i8=-94;
+    const uint16_t u16=4567;
+	const unsigned int id1=12;
+	const unsigned int id2=26;
+ 
+    binn_t sub=binn_map();   
+	binn_t bi8=binn_int8(i8);
+	binn_t bu16=binn_uint16(u16);
 
-#define END_TEST_OBJECT(name)                              \
-    binn_free(name); 
-
-///////////////////////////////////////////////////////////////////////////////
-static void test_object(void) {
-    int8_t i8=-123, i8_2=0, i8_3=0;
-    uint8_t u8=129, u8_2=0;
-    
-    fprintf(stderr, "\n\n%s: START\n", __FUNCTION__);
-    
-    INIT_TEST_OBJECT(head)
-
-    fprintf(stderr, "\nget key (%s), no data\n", "int8");
-    if(binn_object_get_int8(head, "int8", &i8_2))
-        fprintf(stderr, "Unable to get int8 value (normal case)\n"); 
-    else 
-        die("should have failed searching non existent element");
-    
-    fprintf(stderr, "\ninsert key (%s)\n", "int8");
-    if(binn_object_set_int8(head, "int8", i8))
+    if(binn_map_add_item(sub, id1, bi8))
         die("Unable to add int8 value");  
 
-    fprintf(stderr, "\ninsert key (%s)\n", "uint8");
-    if(binn_object_set_uint8(head, "uint8", u8))
-        die("Unable to add uint8 value");  
+    if(binn_map_add_item(sub, id2, bu16))
+        die("Unable to add int8 value");  
 
-    fprintf(stderr, "\ninsert key (%s), once again\n", "int8");
-    if(binn_object_set_int8(head, "int8", i8))
-        fprintf(stderr, "Unable to add int8 value (normal case)\n");  
-    else die("Should have failed to add same key");
-    
-    fprintf(stderr, "\nget key (%s)\n", "int8");
-    if(binn_object_get_int8(head, "int8", &i8_2))
-        die("Unable to get int8 value");  
-    fprintf(stderr, "result get key (%s), value(%d)\n", "int8", i8_2);
-    
-    fprintf(stderr, "\nget key (%s)\n", "int16");
-    if(binn_object_get_int8(head, "int16", &i8_3))
-        fprintf(stderr, "result get key (%s), value(%d) (fails normal)\n", "int8", i8_3);
-    else die("Should have failed to get unknown key");
-   
-    fprintf(stderr, "\nget key (%s)\n", "uint8");
-    if(binn_object_get_uint8(head, "uint8", &u8_2))
-        die("Unable to get uint8 value");  
-    fprintf(stderr, "result get key (%s), value(%d)\n", "uint8", u8_2);
-    
-    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
+    return sub;
+}
 
-    END_TEST_OBJECT(head)
-    
-    fprintf(stderr, "%s: END\n", __FUNCTION__);
-}    
+///////////////////////////////////////////////////////////////////////////////
+static binn_t build_object(void) {
+    const int8_t i8=-123;
+    const uint16_t u16=654;
+	const char *key1="key1";
+	const char *key2="key2";
+ 
+    binn_t sub=binn_object();   
+	binn_t bi8=binn_int8(i8);
+	binn_t bu16=binn_uint16(u16);
+
+    if(binn_object_add_item(sub, key1, bi8))
+        die("Unable to add int8 value");  
+
+    if(binn_object_add_item(sub, key2, bu16))
+        die("Unable to add int8 value");  
+
+    return sub;
+}
     
 ///////////////////////////////////////////////////////////////////////////////
 int main(int ac, char** av) {
-    (void)ac;
+    const char *lstr="lst";
+    const char *mstr="map";
+    const char *ostr="obj";
+	(void)ac;
     (void)av;
     
-    test_list();
-    test_map();
-    test_object();
-    
+    binn_t head=binn_object();
+	if(binn_object_add_item(head, lstr, build_list()))
+        die("Unable to add list to head");  
+	if(binn_object_add_item(head, mstr, build_map()))
+        die("Unable to add map to head");  
+	if(binn_object_add_item(head, ostr, build_object()))
+        die("Unable to add object to head");  
+	
+    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
+	
     fprintf(stderr, "%s: SUCCESS\n", __FUNCTION__);
     return 0;
 }

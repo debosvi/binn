@@ -37,23 +37,17 @@ set(LOCAL_SOURCES
     binn_internal.c
     binn_is_valid.c
     binn_list.c
-    # binn_list_add.c
     binn_list_add_item.c
     binn_list_get_item.c
-    # binn_list_get.c
     binn_map.c
     binn_map_add_item.c
     binn_map_get_item.c
-    # binn_map_get.c
-    # binn_map_get_id.c
-    # binn_map_set.c
+    binn_map_get_id.c
     binn_new.c
     binn_object.c
     binn_object_add_item.c
     binn_object_get_item.c
-    # binn_object_get.c
-    # binn_object_get_key.c
-    # binn_object_set.c
+    binn_object_get_key.c
     binn_search_for_id.c
     binn_search_for_key.c
     binn_search_for_pos.c
