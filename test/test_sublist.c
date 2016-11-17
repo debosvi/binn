@@ -59,5 +59,8 @@ int main(int ac, char** av) {
         fprintf(stderr, "Unable to get value of binn item 1 (normal case)\n");
 	
     fprintf(stderr, "%s: SUCCESS\n", __FUNCTION__);
+    
+    binn_free(sub);
+    binn_term();
     return 0;
 }

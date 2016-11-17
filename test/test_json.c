@@ -72,19 +72,34 @@ int main(int ac, char** av) {
     const char *lstr="lst";
     const char *mstr="map";
     const char *ostr="obj";
+    char *json=0;
 	(void)ac;
     (void)av;
     
     binn_t head=binn_object();
-	if(binn_object_add_item(head, lstr, build_list()))
+    fprintf(stderr, "head created\n");
+
+    if(binn_object_add_item(head, lstr, build_list()))
         die("Unable to add list to head");  
-	if(binn_object_add_item(head, mstr, build_map()))
+    fprintf(stderr, "list created\n");
+
+    if(binn_object_add_item(head, mstr, build_map()))
         die("Unable to add map to head");  
-	if(binn_object_add_item(head, ostr, build_object()))
-        die("Unable to add object to head");  
+    fprintf(stderr, "map created\n");
 	
-    fprintf(stderr, "JSON: result (%s)\n", binn_to_json_str(head));
+    if(binn_object_add_item(head, ostr, build_object()))
+        die("Unable to add object to head");  
+    fprintf(stderr, "object created\n");
+	
+    json=binn_to_json_str(head);
+    fprintf(stderr, "JSON: result (%s)\n", json);
+
+    free(json);
 	
     fprintf(stderr, "%s: SUCCESS\n", __FUNCTION__);
+    
+    binn_free(head);
+    
+    binn_term();
     return 0;
 }

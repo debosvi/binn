@@ -2,21 +2,24 @@
 #include "priv/binn.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-static void binn_free_internal_storage(binn_t item) {
+static void binn_free_internal_storage(binn_internal_t* p) {
     register gensetdyn *container=0;
-    binn_internal_t* p=0;
     binn_t *elem=0;
     unsigned int nelems=0;
     
-    p = binn_get_internal(item);
+    if(!p) return;
+    
     container=&p->data.container;    
     nelems=gensetdyn_n(container);
     BINN_PRINT_DEBUG("%s: nb elems (%d)\n", __FUNCTION__, nelems);
     
     for(int i=0; i<(int)nelems; i++) {
         elem=GENSETDYN_P(binn_t, container, i);
+        BINN_PRINT_DEBUG("%s: free elem (%d)\n", __FUNCTION__, *elem);
         binn_free(*elem);
     }  
+    
+    gensetdyn_free(container);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,17 +28,17 @@ void binn_free(binn_t item) {
     
     if(item==BINN_INVALID) goto exit;
     
-    BINN_PRINT_DEBUG("%s: binn (%d)\n", __FUNCTION__, item);            
     
     _p = GENSETDYN_P(binn_internal_t, &binn_storage_g, item);
     if(!_p) goto exit;
-    
+    BINN_PRINT_DEBUG("%s: binn (%d), type(%d), key(%p)\n", __FUNCTION__, item, _p->type, _p->key);            
+
     // internal frees
     switch(_p->type) {
         case BINN_TYPE_LIST:
         case BINN_TYPE_MAP:
         case BINN_TYPE_OBJECT:
-            binn_free_internal_storage(item);   
+            binn_free_internal_storage(_p);   
             break;
             
         case BINN_TYPE_NULL:
@@ -64,6 +67,14 @@ void binn_free(binn_t item) {
             break;
     }
     
+    
+    // key free
+    if(_p->key) {
+        BINN_PRINT_DEBUG("%s: free key (%p)\n", __FUNCTION__, _p->key);            
+        free(_p->key);
+        _p->key=0;
+    }
+
     // last reset
     (*_p)= binn_internal_zero;
     if(gensetdyn_delete (&binn_storage_g, item)) goto exit;

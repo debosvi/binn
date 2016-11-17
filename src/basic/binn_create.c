@@ -6,7 +6,7 @@ int binn_create(binn_t item, const binn_type_t type, const void const *ptr, cons
     int _ret=1;
     binn_internal_t* _p=0;
 
-	BINN_PRINT_DEBUG("%s: elem(%d)\n", __FUNCTION__, item);
+	BINN_PRINT_DEBUG("%s: elem(%d), type(%d), ptr(%p), size(%u)\n", __FUNCTION__, item, type, ptr, size);
     
     if(item==BINN_INVALID) goto exit;
     if((type<0) || (type>=BINN_TYPE_COUNT)) goto exit;
@@ -51,6 +51,9 @@ int binn_create(binn_t item, const binn_type_t type, const void const *ptr, cons
             break;
     }    
 
+    BINN_PRINT_DEBUG("%s: binn (%d), type(%d), key(%p)\n", __FUNCTION__, item, _p->type, _p->key);            
+
+        
 exit:
     if(_ret) {
         BINN_PRINT_ERROR("%s: unable to create element!\n", __FUNCTION__);

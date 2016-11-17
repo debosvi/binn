@@ -2,7 +2,8 @@
 #ifndef PRIVATE_BINN_H
 #define PRIVATE_BINN_H
 
-#include <stdio.h>
+#include <stdio.h>      // fprintf
+#include <stdlib.h>     // free
 
 #include <skalibs/gensetdyn.h>
 #include <binn/binn.h>
@@ -63,13 +64,11 @@ typedef union {
 typedef struct {
     int             magic;
     binn_type_t     type; 
-    union {
-        char*           key;
-        unsigned int    id;
-    };        
+    char*           key;
+    unsigned int    id;
     binn_data_t     data;
 } binn_internal_t;
-#define BINN_INTERNAL_ZERO  { .magic=0, .type=BINN_TYPE_INIT, .key=0, .data= BINN_DATA_ZERO }
+#define BINN_INTERNAL_ZERO  { .magic=0, .type=BINN_TYPE_INIT, .key=0, .id=0, .data= BINN_DATA_ZERO }
 extern const binn_internal_t binn_internal_zero;
 
 extern int binn_initialized;
@@ -78,8 +77,6 @@ extern gensetdyn binn_storage_g;
 #define BINN_STORAGE_ZERO   GENSETDYN_ZERO 
 
 typedef void (*binn_mem_free)(void*);
-
-extern void binn_init(void);
 
 extern binn_type_t binn_type(binn_t node);
 extern int binn_is_valid(binn_internal_t *item, binn_type_t *ptype, unsigned int *pcount);

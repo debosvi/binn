@@ -51,6 +51,7 @@ set(LOCAL_SOURCES
     binn_search_for_id.c
     binn_search_for_key.c
     binn_search_for_pos.c
+    binn_term.c
     
     ## iterations
     binn_iter_init.c

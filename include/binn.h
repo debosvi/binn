@@ -17,6 +17,9 @@ extern "C" {
 typedef int binn_t;
 #define BINN_INVALID    ((binn_t)-1)
 
+extern void binn_init(void);
+extern void binn_term(void);
+
 // --- GENERAL FUNCTIONS  ----------------------------------------------------------
 extern binn_t binn_list(void);
 extern binn_t binn_map(void);

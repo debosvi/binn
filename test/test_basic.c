@@ -75,5 +75,7 @@ int main(int ac, char** av) {
     END_TEST_COMPLEX(map)
     END_TEST_COMPLEX(object)
     
+    binn_term();
+    
     return 0;
 }
