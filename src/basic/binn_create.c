@@ -41,9 +41,11 @@ int binn_create(binn_t item, const binn_type_t type, const void const *ptr, cons
         case BINN_TYPE_FLOAT: 
         case BINN_TYPE_DOUBLE: 
         case BINN_TYPE_BOOL: 
+			_ret=binn_copy_value(ptr, &_p->data, type, size);
+            break;
         case BINN_TYPE_BLOB: 
         case BINN_TYPE_STRING: 
- 			_ret=binn_copy_value(ptr, &_p->data, type, size);
+ 			_ret=(stralloc_copyb (&_p->data.str, ptr, size)?0:1) ;
             break;
 			
         default:

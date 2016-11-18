@@ -16,6 +16,32 @@ install(TARGETS test_basic
 
 ###############################################################################
 set(LOCAL_SOURCES
+    test_blob.c
+)
+
+add_executable(test_blob ${LOCAL_SOURCES})
+target_link_libraries(test_blob binn)
+
+install(TARGETS test_blob
+    RUNTIME
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
+)
+
+###############################################################################
+set(LOCAL_SOURCES
+    test_string.c
+)
+
+add_executable(test_string ${LOCAL_SOURCES})
+target_link_libraries(test_string binn)
+
+install(TARGETS test_string
+    RUNTIME
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/binn/test
+)
+
+###############################################################################
+set(LOCAL_SOURCES
     test_json.c
 )
 

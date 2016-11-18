@@ -59,7 +59,7 @@ void binn_free(binn_t item) {
             
         case BINN_TYPE_STRING:
         case BINN_TYPE_BLOB:
-            BINN_PRINT_DEBUG("%s: type not managed (%d)\n", __FUNCTION__, _p->type);            
+            stralloc_free(&_p->data.str);            
             break;
             
         default:

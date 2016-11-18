@@ -39,8 +39,8 @@ typedef enum {
 } binn_type_t;
 
 typedef union {
-    void*           pbuf;   // used for list, map, object, blob
-    gensetdyn       container;  // storage type is 'binn_t'
+    stralloc		str;   // used for blob and string
+    gensetdyn       container;  // storage type is 'binn_t', used for list, map and object
     
     // integers
     int8_t      vint8;
@@ -59,7 +59,7 @@ typedef union {
     //
     char        vbool;
 } binn_data_t;
-#define BINN_DATA_ZERO  { 0 }
+#define BINN_DATA_ZERO  { .vdouble=0.0f }
 
 typedef struct {
     int             magic;
@@ -68,7 +68,7 @@ typedef struct {
     unsigned int    id;
     binn_data_t     data;
 } binn_internal_t;
-#define BINN_INTERNAL_ZERO  { .magic=0, .type=BINN_TYPE_INIT, .key=0, .id=0, .data= BINN_DATA_ZERO }
+#define BINN_INTERNAL_ZERO  { .magic=0, .type=BINN_TYPE_INIT, .key=0, .id=0, .data=BINN_DATA_ZERO }
 extern const binn_internal_t binn_internal_zero;
 
 extern int binn_initialized;

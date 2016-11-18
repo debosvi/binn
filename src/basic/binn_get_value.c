@@ -41,22 +41,6 @@ static int binn_get_float_value(const void const *psource, void *pdest, const bi
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-static int binn_get_raw_value(const void const *psource, void *pdest, const binn_type_t type) {
-    int _ret=0;
-
-    switch(type) {
-        case BINN_TYPE_BLOB: *(float*)pdest = *(float*)psource; break;
-        case BINN_TYPE_STRING: *(double*)pdest = *(double*)psource; break; 
-               
-        default:
-            BINN_PRINT_ERROR("%s: type not allowed (%d)\n", __FUNCTION__, type);
-            break;
-    }    
-
-    return _ret;  
-}
-
-///////////////////////////////////////////////////////////////////////////////
 int binn_get_value(const void const *psource, void *pdest, const binn_type_t type) {
     int _ret=0;
 
@@ -76,11 +60,6 @@ int binn_get_value(const void const *psource, void *pdest, const binn_type_t typ
         case BINN_TYPE_FLOAT: 
         case BINN_TYPE_DOUBLE: 
             _ret=binn_get_float_value(psource, pdest, type);
-            break;
-
-        case BINN_TYPE_BLOB: 
-        case BINN_TYPE_STRING: 
-            _ret=binn_get_raw_value(psource, pdest, type);
             break;
         
         default:
