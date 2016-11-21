@@ -65,7 +65,4 @@ set(LOCAL_SOURCES
 add_library(binn STATIC ${LOCAL_SOURCES})
 target_link_libraries(binn skarnet)
 
-install(TARGETS binn
-    ARCHIVE
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/binn
-)
+BOZ_INSTALL_ITEM_WITH_PREFIX(binn "binn")

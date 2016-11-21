@@ -11,7 +11,4 @@ target_link_libraries(binn_json
     jansson
 )
 
-install(TARGETS binn_json
-    ARCHIVE
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/binn
-)
+BOZ_INSTALL_ITEM_WITH_PREFIX(binn_json "binn")
