@@ -88,7 +88,7 @@ json_t* binn_to_json(const binn_t node) {
 
 
     switch (p->type) {
-  // case BINN_STRING:
+        case BINN_TYPE_STRING:
   // case BINN_DATE:
   // case BINN_TIME:
   // case BINN_DATETIME:
@@ -98,8 +98,8 @@ json_t* binn_to_json(const binn_t node) {
   // case BINN_CSS:
   // case BINN_JSON:
   // case BINN_JAVASCRIPT:
-    // value = json_string((char *)base->ptr);
-    // break;
+            value = json_string(p->data.str.s);
+            break;
 
   //case BINN_BLOB:
   //  value = json_string((char *)base->ptr);
