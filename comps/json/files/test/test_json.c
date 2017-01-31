@@ -10,6 +10,13 @@ static void die(const char const *msg) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+static binn_t build_string(void) {
+    binn_t str=binn_string("list content");   
+
+    return str;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 static binn_t build_list(void) {
     const int8_t i8=-49;
     const uint16_t u16=1234;
@@ -69,6 +76,7 @@ static binn_t build_object(void) {
     
 ///////////////////////////////////////////////////////////////////////////////
 int main(int ac, char** av) {
+    const char *sstr="str";
     const char *lstr="lst";
     const char *mstr="map";
     const char *ostr="obj";
@@ -86,11 +94,15 @@ int main(int ac, char** av) {
     if(binn_object_add_item(head, mstr, build_map()))
         die("Unable to add map to head");  
     fprintf(stderr, "map created\n");
-	
+
     if(binn_object_add_item(head, ostr, build_object()))
         die("Unable to add object to head");  
     fprintf(stderr, "object created\n");
-	
+
+    if(binn_object_add_item(head, sstr, build_string()))
+        die("Unable to add string to head");  
+    fprintf(stderr, "string created\n");
+
     json=binn_to_json_str(head);
     fprintf(stderr, "JSON: result (%s)\n", json);
 
