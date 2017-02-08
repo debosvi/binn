@@ -1,6 +1,79 @@
 
 #include "private/json_p.h"
 
+#define MAX_CHUNK_SIZE  (16)
+
+typedef struct {
+    const char *data;
+    size_t off;
+    size_t cap;
+    char delim;
+} binn_source_t;
+
+///////////////////////////////////////////////////////////////////////////////
+static size_t binn_reader_cb(void *buf, size_t buflen, void *arg) {
+    binn_source_t *s = (binn_source_t*)arg;
+    char *p=(char*)buf;
+    char inc=1;
+    size_t lg=0;
+    
+    BINN_PRINT_DEBUG("%s: buf(%p), len(%d)\n", __FUNCTION__, buf, buflen);
+    
+    if( s->off >= s->cap) return 0;
+    if( p[s->off-1] ==']') return 0;
+    if( p[s->off-1] =='}') return 0;
+    
+    // search for start delimiter
+    if(!s->delim) {
+        p=(char*)s->data;
+        while((size_t)(p-(char*)s->data)<s->cap) {
+            if(((*p)==']') || ((*p)=='}')) break;   
+            if(((*p)=='{') || ((*p)=='[')) {
+                s->delim=(*p);
+                break;
+            }
+            p++;
+        }
+    }
+    if(!s->delim) {
+        BINN_PRINT_ERROR("%s: JSON not contains any start delimiter\n", __FUNCTION__);
+        return 0;
+    }
+
+    // search for end delimiter
+    if(!p)
+        p=(char*)s->data;
+    else p++;
+    
+    while((size_t)(p-(char*)s->data)<s->cap) {
+        if((s->delim=='{') && ((*p)=='{')) ++inc;
+        if((s->delim=='[') && ((*p)=='[')) ++inc;
+        if((s->delim=='{') && ((*p)=='}')) --inc;
+        if((s->delim=='[') && ((*p)==']')) --inc;
+        p++;        
+        if(!inc) break;
+    }
+    
+    if(inc) {
+        BINN_PRINT_ERROR("%s: JSON not contains any stop delimiter\n", __FUNCTION__);
+        return 0;
+    }
+    
+    lg=p-s->data;
+    lg=(buflen>lg?lg:buflen);
+    
+    if (lg > s->cap - s->off)
+        lg = s->cap - s->off;
+    if (lg > 0) {
+        memcpy(buf, s->data + s->off, lg);
+        s->off += lg;
+        fprintf(stderr, "%s: buffer(%s)\n", __PRETTY_FUNCTION__, (char*)buf);
+        return lg;
+    } else {
+        return 0;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 binn_t json_obj_to_binn(json_t *base) {
     binn_t head=BINN_INVALID;
@@ -62,15 +135,34 @@ binn_t json_obj_to_binn(json_t *base) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-binn_t json_to_binn(const char const *json) {
+int json_to_binn(const char const *json, binn_t *head) {
+    int _ret=-1;
     json_t *base=0;
-    binn_t head=BINN_INVALID;
+    binn_t h=BINN_INVALID;
+    binn_source_t source;
+    json_error_t error;
+    
+    if(!json || !head) goto exit;
+    
+    source.data = json;
+    source.cap=strlen(json);
+    source.off=0;
+    source.delim=0;
+    
+    base = json_load_callback(binn_reader_cb, &source, 0, &error);
+    if(!base) {
+        if(source.off) _ret=-2;
+        goto exit;
+    }
 
-    base = json_loads(json, 0, NULL);
-    if(!base) return BINN_INVALID;
-
-    head = json_obj_to_binn(base);
-
+    h = json_obj_to_binn(base);
     json_decref(base);
-    return head;
+
+    (*head)=h;
+    _ret=source.off;
+    
+exit:
+    if(_ret<0) 
+        (*head)=BINN_INVALID;
+    return _ret;
 }
