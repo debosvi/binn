@@ -8,7 +8,7 @@
 char* binn_to_javascript(const binn_t node);
 
 char* binn_to_json_str(const binn_t node);
-binn_t json_to_binn(const char const *json);
+int json_to_binn(const char const *json, binn_t *head);
 
 json_t* binn_to_json(const binn_t node);
 binn_t json_obj_to_binn(json_t *base);
