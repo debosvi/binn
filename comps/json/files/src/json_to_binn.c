@@ -20,8 +20,8 @@ static size_t binn_reader_cb(void *buf, size_t buflen, void *arg) {
     BINN_PRINT_DEBUG("%s: buf(%p), len(%d)\n", __FUNCTION__, buf, buflen);
     
     if( s->off >= s->cap) return 0;
-    if( p[s->off-1] ==']') return 0;
-    if( p[s->off-1] =='}') return 0;
+    if( s->off && (p[s->off-1] ==']')) return 0;
+    if( s->off && (p[s->off-1] =='}')) return 0;
     
     // search for start delimiter
     if(!s->delim) {
