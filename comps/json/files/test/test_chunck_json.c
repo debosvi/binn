@@ -1,12 +1,18 @@
 
+#define  _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
+#include <skalibs/djbunix.h>
 #include <skalibs/stralloc.h>
 #include <skalibs/buffer.h>
+#include <skalibs/sig.h>
+#include <skalibs/selfpipe.h>
 #include <skalibs/iopause.h>
+#include <skalibs/strerr2.h>
 
 #include "test_binn.h"
 
@@ -48,17 +54,64 @@ static int parse_string(char* json) {
 static const char *complete_str="{ \"cmd\": \"test\", \"data\": [ 0, 1, 2, 3] }      { \"titi\": \"toto\", \"vals\": [ 0, 1, 2, 3] }  [ 10, 11, 12, 13] ";
 static char *p_str=0;
 static int nb_error=0;
+static unsigned int loop_cont_g = 1;
+
+#define SIGNAL_FD_IDX (2)
+
+static void handle_signals (void) {
+    for (;;) {
+        switch (selfpipe_read()) {
+            case -1 : strerr_diefu1sys(111, "selfpipe_read") ;
+            case 0 : return ;
+
+            case SIGCHLD:
+            case SIGTERM:
+            case SIGHUP:
+            case SIGQUIT:
+            case SIGINT:
+                strerr_warn3x(PROG, ": ", "now quitting ...");
+                loop_cont_g = 0;
+                break ;
+
+            default :
+                strerr_dief1x(101, "internal error: inconsistent signal state. Please submit a bug-report.") ;
+        }
+    }
+}
+
+static int init_sig_fd(void) {
+    int fd = selfpipe_init() ;
+    if (fd < 0) strerr_diefu1sys(111, "init selfpipe") ;
+
+    if (sig_ignore(SIGPIPE) < 0) strerr_diefu1sys(111, "ignore SIGPIPE") ;
+
+    {
+        sigset_t set ;
+        sigemptyset(&set) ;
+        sigaddset(&set, SIGTERM) ;
+        sigaddset(&set, SIGHUP) ;
+        sigaddset(&set, SIGQUIT) ;
+        sigaddset(&set, SIGCHLD) ;
+        sigaddset(&set, SIGINT) ;
+        if (selfpipe_trapset(&set) < 0) strerr_diefu1sys(111, "trap signals") ;
+    }
+
+    return fd;
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 int main(int ac, char** av) {
     int _ret=0;
+    int sfd=init_sig_fd();
     int p[2] = {0};
     tain_t deadline;
     
     (void)ac;
     (void)av;
     
-    pipe(&p[0]);
+    pipenb(&p[0]);
     stralloc_ready(&input_sa_g, MAX_ALLOC_CHUNCK);
     buffer_init(&output_b_g, buffer_write, p[1], output_s_g, MAX_ALLOC_CHUNCK);
     buffer_init(&input_b_g, buffer_read, p[0], input_s_g, MAX_ALLOC_CHUNCK);
@@ -67,16 +120,17 @@ int main(int ac, char** av) {
     tain_addsec_g(&deadline, 1);    
     p_str=(char*)complete_str;
     
-    while(1) {
-        iopause_fd x[2];
+    while(loop_cont_g) {
+        iopause_fd x[3];
         int r=-1;
         
+        x[SIGNAL_FD_IDX].fd = sfd; x[SIGNAL_FD_IDX].events = IOPAUSE_READ;
         x[0].fd = buffer_fd(&output_b_g);
         x[0].events = (buffer_iswritable(&output_b_g)?IOPAUSE_WRITE:0);
         x[1].fd = buffer_fd(&input_b_g);
         x[1].events = IOPAUSE_READ;        
         
-        r=iopause_g(x, 2, &deadline);
+        r=iopause_g(x, 3, &deadline);
         if(r<0) break;
         else if(!r) {
             
@@ -100,25 +154,27 @@ int main(int ac, char** av) {
                 
             }
             deadline=STAMP;
-            deadline.nano+=1000*1000*100;                
+            deadline.nano+=1000*1000;    
+            // tain_addsec_g(&deadline, 1);
         }
+        else if(x[SIGNAL_FD_IDX].revents & IOPAUSE_READ) handle_signals() ;
         else if(x[0].revents&IOPAUSE_WRITE) {
             buffer_flush(&output_b_g);
         }
         else if(x[1].revents&IOPAUSE_READ) {
-            char s[256];
             unsigned int lg=0;
             int got=0;
+
             lg=buffer_fill(&input_b_g);
-            if(lg>256) lg=256;
+            stralloc_readyplus(&input_sa_g, lg);
             
-            lg=buffer_get(&input_b_g, s, lg);
-            stralloc_catb(&input_sa_g, s, lg);
+            lg=buffer_get(&input_b_g, input_sa_g.s+input_sa_g.len, lg);
+            input_sa_g.len+=lg;
             input_sa_g.s[input_sa_g.len]=0;
             
             got=parse_string(input_sa_g.s);
             if(got<0) {
-                if(nb_error++>=25) break;
+                if(nb_error++>=50) break;
             }
             else {
                 if(got<(int)input_sa_g.len) {
@@ -131,6 +187,9 @@ int main(int ac, char** av) {
         }
         
     }
+    
+    stralloc_free(&input_sa_g);
+    selfpipe_finish() ;
     
     binn_term();
     return 0;
