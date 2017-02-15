@@ -134,7 +134,7 @@ int main(int ac, char** av) {
         if(r<0) break;
         else if(!r) {
             
-            int max=rand()%16;
+            int max=45+(rand()%16);
             int count=max;
             // fprintf(stderr, "write max (%d)\n", max);
             while(count>0) {
@@ -161,29 +161,40 @@ int main(int ac, char** av) {
         else if(x[0].revents&IOPAUSE_WRITE) {
             buffer_flush(&output_b_g);
         }
-        else if(x[1].revents&IOPAUSE_READ) {
-            unsigned int lg=0;
+        else if(x[1].revents&IOPAUSE_READ) {            
             int got=0;
 
-            lg=buffer_fill(&input_b_g);
-            stralloc_readyplus(&input_sa_g, lg);
+            buffer_fill(&input_b_g);
+            stralloc_ready(&input_sa_g, buffer_len(&input_b_g));
             
-            lg=buffer_get(&input_b_g, input_sa_g.s+input_sa_g.len, lg);
-            input_sa_g.len+=lg;
-            input_sa_g.s[input_sa_g.len]=0;
-            
-            got=parse_string(input_sa_g.s);
-            if(got<0) {
-                if(nb_error++>=50) break;
-            }
-            else {
-                if(got<(int)input_sa_g.len) {
-                    buffer_unget(&input_b_g, input_sa_g.len-got);
+            while(1) {
+                if(!got) {
+                    unsigned int lg1=buffer_len(&input_b_g);
+                    unsigned int lg2=buffer_getnofill(&input_b_g, input_sa_g.s+input_sa_g.len, lg1);
+                    // fprintf(stderr, "load new buffer(%d/%d)\n", lg1, lg2);
+                    input_sa_g.len+=lg2;
+                    input_sa_g.s[input_sa_g.len]=0;
                 }
+            
+                got=parse_string(input_sa_g.s);
+                if(got<0) {
+                    if(nb_error++>=50) loop_cont_g=0;
+                    break;
+                }
+                else {
+                    // fprintf(stderr, "got(%d)\n", got);
+                    
+                    if(got>0) {
+                        if(got<(int)input_sa_g.len) {
+                            buffer_unget(&input_b_g, input_sa_g.len-got);
+                        }
+                        got=0;
+                        input_sa_g.len=0;
+                        nb_error=0;
+                    }
+                }
+            } // while
 
-                nb_error=0;
-                input_sa_g.len=0;
-            }
         }
         
     }
